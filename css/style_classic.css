@@ -1,0 +1,36 @@
+.Raleway, .Raleway a {
+	font-family: 'Raleway';
+	color: #000000;
+}
+.Roboto, .Roboto a {
+	font-family: 'RobotoThin';
+	color: #000000;
+}
+
+.small {
+	font-size: 11px;
+	color: #333333;
+}
+.middle, .middle a {
+	font-size: 14px;
+	color: #333333;
+}
+.big, .big a {
+	font-size: 18px;
+	color: #333333;
+}
+.superbig, .superbig a {
+	font-size: 22px;
+	color: #333333;
+}
+.xxxbig, .xxxbig a {
+	font-size: 28px;
+	color: #333333;
+}
+
+a {
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: line;
+}
