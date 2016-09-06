@@ -29,7 +29,7 @@ $us_nome = $_SESSION['user'];
 					</ul>
 				</li>
 				<li>
-				<a href="#">Ferramentas</a>
+				<a href="<?php echo base_url('index.php/main/filescan');?>">File Scan</a>
 				</li>
 				<!--
 				<li class="dropdown">

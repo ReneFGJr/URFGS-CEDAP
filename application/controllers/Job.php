@@ -1,5 +1,5 @@
 <?php
-class Main extends CI_Controller {
+class Job extends CI_Controller {
 	function __construct() {
 		global $dd, $acao;
 		parent::__construct();
@@ -39,6 +39,14 @@ class Main extends CI_Controller {
 	function index() {
 		$this -> cab();
 		$this -> load -> view('home', null);
+		$this -> footer();
+	}
+
+	function view($job = '') {
+		$this -> load -> model('files');
+		$this -> cab();
+		$data['content'] = $this -> files -> thumb($job);
+		$this -> load -> view('content', $data);
 		$this -> footer();
 	}
 
@@ -86,43 +94,15 @@ class Main extends CI_Controller {
 		echo $canvas;
 	}
 
-	function myaccount() {
-		$id = $_SESSION['id'];
-
-		$this -> cab();
-		$data['title'] = '';
-		$data['content'] = $this -> users -> my_account($id);
-		$this -> load -> view('content', $data);
-	}
-
-	function change_password() {
-		$id = $_SESSION['id'];
-
-		$this -> cab();
-		$data['title'] = '';
-
-		$data['content'] = $this -> users -> change_password($id);
-		$this -> load -> view('content', $data);
-	}
-
-	function change_my_sign() {
-		$id = $_SESSION['id'];
-
-		$this -> cab();
-		$data['title'] = '';
-
-		$data['content'] = $this -> users -> change_sign($id);
-		$this -> load -> view('content', $data);
-	}
-
 	function filescan() {
 		$dir = get("dd1");
-		$this->load->model('files');
+		$this -> load -> model('files');
 		$this -> cab();
 		$data['title'] = 'Jobs';
-		$txt = $this->files->dirscan($dir);
+		$txt = $this -> files -> dirscan($dir);
 		$data['content'] = $txt;
 		$this -> load -> view('content', $data);
 	}
+
 }
 ?>
