@@ -132,6 +132,100 @@ class Admin extends CI_controller {
 
 	}
 
+	/*********************************************************************** COLLETIONS *********************/
+	function colletion($id = 0) {
+		/* Load Model */
+		$model = 'colletions';
+		$this -> load -> model($model);
+
+		/* Controller */
+		$this -> cab();
+
+		$data = array();
+		$data['title'] = 'Coleções';
+
+		$form = new form;
+		$form = $this -> $model -> row($form);
+		$form -> tabela = $this -> $model -> table;
+		$form -> see = true;
+		$form -> novo = true;
+		$form -> edit = true;
+
+		$form -> row_edit = base_url('index.php/admin/colletion_edit');
+		$form -> row_view = base_url('index.php/admin/colletion_view');
+		$form -> row = base_url('index.php/admin/colletion');
+
+		$data['content'] = row($form, $id);
+
+		$this -> load -> view('content', $data);
+	}
+
+	function colletion_edit($id = 0, $chk = '') {
+		/* Load Model */
+		$model = 'colletions';
+		$this -> load -> model($model);
+
+		/* Controller */
+		$this -> cab();
+		$form = new form;
+		$form -> id = $id;
+		$table = $this -> $model -> table;
+		$cp = $this -> $model -> cp();
+		$tela = $form -> editar($cp, $table);
+		$data['content'] = $tela;
+
+		$this -> load -> view('content', $data);
+		$this -> footer();
+
+		/****************/
+		if ($form -> saved > 0) {
+			redirect(base_url('index.php/admin/colletion'));
+		}
+	}
+	
+	function rdf_edit($id=0,$chk='',$pg='')
+		{
+			$model = 'rdfs';
+			$this->load->model($model);
+			
+			$data['nocab'] = 'yes';
+			$this->cab($data);
+			$cp = $this->$model->cp($id,$pg);
+			
+			$form = new form;
+			$form->id = $id;
+			$tela = $form->editar($cp,'rdf_propriety');
+			$data['content'] = $tela;
+			$data['title'] = 'Entrada';	
+			$this->load->view('content',$data);	
+			
+		}
+
+	function colletion_view($id = 0, $chk = '') {
+		/* Load Model */
+		$model = 'colletions';
+		$this -> load -> model($model);
+
+		/* Controller */
+		$this -> cab();
+
+		$data = $this -> $model -> le($id);
+		$tela = $this -> load -> view('colletion/view', $data, true);
+		
+		$tela .= '<br>';
+
+		$tela .= '<button onclick="newxy(\'' . base_url('index.php/admin/rdf_edit/0/' . checkpost_link(0)) . '/'.$id.'\',800,600);" class="btn btn-primary">Adicionar Propriedade</button>';
+		$tela .= '&nbsp;';
+		$tela .= '<button onclick="newxy(\'' . base_url('index.php/main/cover_sheet/'.$id.'/' . checkpost_link(0)) .'\',800,600);" class="btn btn-primary">Cover Page</button>';
+		$data = array();
+
+		$dados['content'] = $tela;
+		$dados['title'] = '';
+		$this -> load -> view('content', $dados);
+
+		$this -> footer();
+	}
+
 	/*********************************************************************** USERS *********************/
 	function users() {
 		/* Load Model */

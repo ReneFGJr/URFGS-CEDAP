@@ -42,6 +42,18 @@ class Main extends CI_Controller {
 		$this -> footer();
 	}
 
+	function cover_sheet($id) {
+		$this -> load -> helper('tcpdf');
+		
+		/* Load Model */
+		$model = 'colletions';
+		$this -> load -> model($model);
+		$data = $this -> $model -> le($id);
+		$data['content'] = $this->load->view('colletion/view',$data,true);
+	
+		$this -> load -> view('colletion/cover_sheet', $data);
+	}
+
 	function convert_tif_to_jpg() {
 		/* Read the image */
 		$im = new Imagick("d://_REPOSITORIO//test.png");
@@ -117,12 +129,13 @@ class Main extends CI_Controller {
 
 	function filescan() {
 		$dir = get("dd1");
-		$this->load->model('files');
+		$this -> load -> model('files');
 		$this -> cab();
 		$data['title'] = 'Jobs';
-		$txt = $this->files->dirscan($dir);
+		$txt = $this -> files -> dirscan($dir);
 		$data['content'] = $txt;
 		$this -> load -> view('content', $data);
 	}
+
 }
 ?>

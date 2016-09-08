@@ -68,7 +68,8 @@ $us_nome = $_SESSION['user'];
 				?>
 			</ul>
 			<?php
-				if (perfil("#ADM")) {
+				//if (perfil("#ADM")) 
+				{
 					echo '<li class="dropdown">' . cr();
 					echo '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrador <span class="caret"></span></a>' . cr();
 					echo '<ul class="dropdown-menu">' . cr();
@@ -77,7 +78,10 @@ $us_nome = $_SESSION['user'];
 					echo '	</li>' . cr();
 					echo '	<li>' . cr();
 					echo '		<li><a href="' . base_url('index.php/admin/comunicacao_1') . '">Mensagens do Sistema</a></li>' . cr();
-					echo '	</li>' . cr();					
+					echo '	</li>' . cr();	
+					echo '	<li>' . cr();
+					echo '		<li><a href="' . base_url('index.php/admin/colletion') . '">Coleções (cadastro)</a></li>' . cr();
+					echo '	</li>' . cr();									
 					echo '</ul>' . cr();
 				}
 			?>

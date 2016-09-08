@@ -28,8 +28,9 @@ if (!function_exists(('msg')))
 					}
 			}
 	}
+	
 /* Login */
-$lang['login_enter'] = 'Entar';
+$lang['login_enter'] = 'Entrar';
 $lang['login_name'] = 'Informe seu login';
 $lang['login_password'] = 'Informe sua senha';
 $lang['login_enter'] = 'Entar';
@@ -42,5 +43,11 @@ $lang['bt_clear'] = 'limpa filtro';
 
 $lang['proposta_nova'] = 'nova proposta';
 $lang['not_register'] = 'nenhum registro';
+$lang['dc:creator'] = 'Autor';
+$lang['dc:language'] = 'Idioma';
+
+$lang['pt_BR'] = 'Português';
+$lang['us'] = 'Inglês';
+$lang['dc:title'] = 'Título';
 
 ?>
