@@ -8,6 +8,13 @@ class colletions extends CI_model {
 		array_push($cp, array('$T80:6', 'c_context', 'Descrição', false, true));
 		array_push($cp, array('$O 1:Ativo&9:Cancelado', 'c_status', 'Situação', false, true));
 		array_push($cp, array('$H8', 'updated_at', date("Y-m-d H:i:s"), false, true));
+		
+		array_push($cp, array('$A', '', 'Metadata formats', false, true));
+		array_push($cp, array('$C', '', 'DC', false, true));
+		array_push($cp, array('$C', '', 'PREMIS', false, true));
+		array_push($cp, array('$C', '', 'MODS', false, true));
+		array_push($cp, array('$C', '', 'METS', false, true));
+		array_push($cp, array('$C', '', 'MIX', false, true));
 		return ($cp);
 	}
 

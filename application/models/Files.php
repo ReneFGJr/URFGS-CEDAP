@@ -1,6 +1,7 @@
 <?php
 class files extends CI_model {
-	var $temp_dir = 'D:/projeto/URFGS-CEDAP/jobs/';
+	/* var $temp_dir = 'D:/jobs/'; */
+	var $temp_dir = 'Z:/3x4/';
 	function dirscan($dir = '') {
 		if (strlen($dir) == 0) {
 			$dir = $this -> temp_dir;
@@ -27,6 +28,17 @@ class files extends CI_model {
 		}
 		return ($sx);
 	}
+	
+	function show_file($file)
+		{
+			// Set the content type header - in this case image/jpeg
+			
+			$file = $this->temp_dir.$file;
+			//echo $file;
+			header('Content-Type: image/jpg');
+			echo readfile($file);
+						
+		}
 
 	function thumb($job = '') {
 		$dir = $this -> temp_dir . '/' . $job;
@@ -36,11 +48,12 @@ class files extends CI_model {
 		$sx .= '<div class="col-md-3">';
 		$t = 0;
 		for ($r = 0; $r < count($files); $r++) {
-			$mini = troca('jobs/' . $job . '/thumb/' . $files[$r], '.tif', '.bmp');
+			$mini = troca($job . '/thumb/' . $files[$r], '.tif', '.bmp');
 			if (strpos($mini, '.bmp')) {
 				//$sx .= $files[$r];
-				$sx .= '<img src="' . base_url($mini) . '" width="250" style="border:1px;">';
+				$sx .= '<img src="' . base_url('index.php/job/file/'.$mini) . '" width="250" style="border:1px;">';
 				$sx .= '<br>';
+				$sx .= $mini;
 				$sx .= '<br>';
 				$t = $t + 2;
 			}

@@ -43,11 +43,12 @@ $lang['bt_clear'] = 'limpa filtro';
 
 $lang['proposta_nova'] = 'nova proposta';
 $lang['not_register'] = 'nenhum registro';
+
 $lang['dc:creator'] = 'Autor';
 $lang['dc:language'] = 'Idioma';
 
 $lang['pt_BR'] = 'Português';
 $lang['us'] = 'Inglês';
 $lang['dc:title'] = 'Título';
-
+$lang['dc:format'] = 'Formato';
 ?>
