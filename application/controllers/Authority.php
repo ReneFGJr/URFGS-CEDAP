@@ -29,6 +29,14 @@ class Authority extends CI_controller
 					}
 			}
 			
+		function bibliodata()
+			{
+				$this->load->model('autorities');
+				
+				$this->cab();
+				$this->load->view('bibliodata/login',null);
+			}
+			
 		function import()
 			{
 				$this->load->model('frbr');
