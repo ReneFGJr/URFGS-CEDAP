@@ -73,13 +73,71 @@ class Job extends CI_Controller {
 		$this -> footer();
 	}
 
-	function view($job = '') {
+	function view($job = '',$img=0) {
 		$this -> load -> model('files');
 		$this -> cab();
-		$data['content'] = $this -> files -> thumb($job);
+		$data['title'] = '';
+		$data['content'] = $this -> files -> thumb($job,$img);
 		$this -> load -> view('content', $data);
 		$this -> footer();
 	}
+	
+	function file_delete($job,$id,$conf='')
+		{
+			$this -> load -> model('files');
+			$data['nocab'] = true;
+			$this->cab($data);
+			$file = $this->files->temp_dir.$job.'/'.$id;
+			if (strlen($conf) == 0)
+				{
+					$sx = '';
+					$sx .= '<hr>';
+					$sx .= '<span class="btn btn-danger">'.msg('SIM').'</span>';
+					$sx .= ' ';
+					$sx .= '<span class="btn btn-default">'.msg('NÃO').'</span>';
+					$data['content'] = 'Confirma exclusão de '.$file.'?'.$sx;;
+					$data['title'] = '';
+					$this->load->view('content',$data);
+				}
+			
+		}
+	
+	function microservice($job,$file,$service)
+		{
+			ini_set('max_execution_time', 300); //300 seconds = 5 minutes
+			$data['nocab'] = true;
+			$this->cab($data);
+			
+			$this->load->model('files');
+			$this->load->model('microservices');
+			$sv = $this->microservices->le($service);
+			
+			if (count($sv) > 0)
+				{
+					$ln = $sv['s_cmd'];
+					$file1 = $this->files->temp_dir.$job.'/'.$file;
+					$filen = $file;
+					$filen = troca($filen,'.tif','.jpg');
+					$filen = troca($filen,'.tiff','.jpg');
+					$filen = troca($filen,'.TIF','.jpg');
+					$filen = troca($filen,'.TIFF','.jpg');
+					
+					$file2 = $this->files->temp_dir.$job.'/'.$filen;
+					$ln = troca($ln,'$1',$file1);
+					$ln = troca($ln,'$2',$file2);
+					
+					$data['content'] = 'Convertendo';
+					$data['title'] = 'Conversão de formato';
+					$this->load->view('content',$data);
+					
+					$sx = '<tt>'.$ln.'</tt>';
+					shell_exec($ln);
+					$data['content'] = $sx;
+					$data['title'] = '';
+					$this->load->view('content',$data);
+				}
+			
+		}
 
 	function convert_tif_to_jpg() {
 		/* Read the image */

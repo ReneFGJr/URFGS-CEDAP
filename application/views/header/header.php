@@ -16,6 +16,7 @@ if (!(isset($bootstrap))) { $bootstrap = 1;
  ?>
 	<?php
 	array_push($js,'jquery.mask.js');
+	array_push($js,'jquery.elevatezoom.js');
 	for ($r = 0; $r < count($js); $r++) {
 		echo '	<script src="' . base_url('js/' . $js[$r]) . '"></script>' . cr();
 	}
