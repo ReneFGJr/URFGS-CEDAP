@@ -75,6 +75,7 @@ class Job extends CI_Controller {
 
 	function view($job = '',$img=0) {
 		$this -> load -> model('files');
+		$this -> load -> model('microservices');
 		$this -> cab();
 		$data['title'] = '';
 		$data['content'] = $this -> files -> thumb($job,$img);
@@ -85,6 +86,7 @@ class Job extends CI_Controller {
 	function file_delete($job,$id,$conf='')
 		{
 			$this -> load -> model('files');
+			$this -> load -> model('microservices');
 			$data['nocab'] = true;
 			$this->cab($data);
 			$file = $this->files->temp_dir.$job.'/'.$id;
@@ -92,12 +94,20 @@ class Job extends CI_Controller {
 				{
 					$sx = '';
 					$sx .= '<hr>';
-					$sx .= '<span class="btn btn-danger">'.msg('SIM').'</span>';
+					$sx .= '<a href="'.base_url('index.php/job/file_delete/'.$job.'/'.$id.'/S').'" class="btn btn-danger">'.msg('SIM').'</a>';
 					$sx .= ' ';
-					$sx .= '<span class="btn btn-default">'.msg('NÃO').'</span>';
+					$sx .= '<a href="#" class="btn btn-default" onclick="window.close();">'.msg('NÃO').'</a>';
+					
 					$data['content'] = 'Confirma exclusão de '.$file.'?'.$sx;;
 					$data['title'] = '';
 					$this->load->view('content',$data);
+				} else {
+					$dd = array();
+					$dd['jobs'] = $job;
+					$dd['file'] = $id;
+
+					$this->microservices->exec(3,$dd);
+
 				}
 			
 		}

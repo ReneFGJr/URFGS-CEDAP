@@ -275,24 +275,28 @@ class files extends CI_model {
 			$file = $this -> temp_dir . $midle;
 
 			if (!file_exists($file)) {
+				$dd = array();
+				$dd['jobs'] = $job;
+				$dd['file'] = $files[$id];
+				
+				$this -> microservices -> exec(1, $dd);
 				$sx .= '<span onclick="newxy(\'' . base_url('index.php/job/microservice/' . $job . '/' . $files[$id] . '/' . '1') . '\',300,300);" class="btn btn-primary">';
 				$sx .= 'create middle image';
 				$sx .= '</span>';
-			} else {
-				$midle = troca($files[$id], '.tif', '.jpg');
-				$sx .= '<img src="' . base_url('index.php/job/file/' . $job . '/' . $midle) . '" id="image_fix" width="100%" style="border:1px;">';
-				$sx .= '<br><br>';
-
-				$sx .= '<a href="' . base_url('index.php/job/file/' . $job . '/' . $midle) . '" class="btn btn-primary" target="_' . $file . '">' . msg('view_full') . '</a>';
-				$sx .= '<script>
-    								$(\'#image_fix\').elevateZoom({
-										  zoomType	: "lens",
-										  /* lensShape : "round", */
-										  lensSize    : 300,
-										  scrollZoom : true
-    								});
-								</script>';
 			}
+			$midle = troca($files[$id], '.tif', '.jpg');
+			$sx .= '<img src="' . base_url('index.php/job/file/' . $job . '/' . $midle) . '" id="image_fix" width="100%" style="border:1px;">';
+			$sx .= '<br><br>';
+
+			$sx .= '<a href="' . base_url('index.php/job/file/' . $job . '/' . $midle) . '" class="btn btn-primary" target="_' . $file . '">' . msg('view_full') . '</a>';
+			$sx .= '<script>
+						$(\'#image_fix\').elevateZoom({
+							  zoomType	: "lens",
+							  /* lensShape : "round", */
+							  lensSize    : 300,
+							  scrollZoom : true
+						});
+					</script>';
 			/* delete imagem */
 			$sx .= ' ';
 			$sx .= '<span onclick="newxy(\'' . base_url('index.php/job/file_delete/' . $job . '/' . $midle) . '\',600,300);" class="btn btn-danger">' . msg('delete_file') . '</a>';
