@@ -21,13 +21,32 @@ class files extends CI_model {
 		{
 			$sp = '';
 			$type = $this->filetype($fl);
+			$sx = $type;
 			switch ($type)
 				{
 				case 'xxx':
 					break;
-				default:
-					$sx = '<img src="'.base_url('index.php/io/image/'.$fld.'/?dd0='.$id).'">';
+				case 'pdf':
+					$url = base_url('index.php/io/image/'.$fld.'/?dd0='.$id);
+					$sx = '<iframe nome="pdf" width="100%" height="100%" src="'.$url.'">';
+					$sx .= '</iframe>';
+				case 'jpg':
+					$sx .= '<img src="'.base_url('index.php/io/image/'.$fld.'/?dd0='.$id).'" width="100%" id="image_zoom">';
+					$sx .= '
+						<script>
+						$(\'#image_zoom\').elevateZoom({
+							  /* zoomType : "inner", */
+							  zoomType	: "lens",
+							  /* lensShape : "round", */
+							  lensSize    : 250,
+							  zoomWindowPosition: 10,
+							  scrollZoom : true
+						});
+					</script>					
+					';
 					break;
+				default:
+					$sx .= 'no preview';
 				}
 			return($sx);
 		}

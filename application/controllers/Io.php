@@ -41,7 +41,7 @@ class IO extends CI_Controller {
 	}
 
 	function image($d1 = '', $d2 = '', $d3 = '', $d4 = '', $d5 = '', $d6 = '', $d7 = '', $d8 = '') {
-		$name = get("dd0");
+		$id = round(get("dd0"));
 		$this -> load -> model('files');
 
 		$file = '';
@@ -63,54 +63,24 @@ class IO extends CI_Controller {
 				$file .= $n;
 			}
 		}
-		$file = $this -> files -> temp_dir . $file;
-		echo $file;
-		echo '<hr>';
+
 		$fl = $this -> files -> files($file);
-		print_r($fl);
-		echo $file.'-'.$fl[$id];
-		echo '<hr>';		
+		$file = $this->files->temp_dir.$file.'/'.$fl[$id];
 		
-		exit;
-
-		//header('Content-Type: image/jpg');
-		//header('Content-Type: image/bmp');
-		//readfile($file);
-	}
-
-	function img($d1 = '', $d2 = '', $d3 = '', $d4 = '', $d5 = '', $d6 = '', $d7 = '', $d8 = '') {
-		$name = get("dd0");
-		$this -> load -> model('files');
-
-		$file = '';
-		$dd = array();
-		$dd[1] = $d1;
-		$dd[2] = $d2;
-		$dd[3] = $d3;
-		$dd[4] = $d4;
-		$dd[5] = $d5;
-		$dd[6] = $d6;
-		$dd[7] = $d7;
-		$dd[8] = $d8;
-
-		for ($r = 1; $r <= 8; $r++) {
-			$n = $dd[$r];
-			if (strlen($n) > 0) {
-				if (strlen($file) > 0) { $file .= '/';
-				}
-				$file .= $n;
+		$type = $this->files->filetype($file);
+		switch ($type)
+			{
+			case 'jpg':
+				header('Content-Type: image/jpg');
+				break;		
+			case 'bmp':
+				header('Content-Type: image/bmp');
+				break;		
+			case 'pdf':
+				header("Content-type:application/pdf");
+				break;
 			}
-		}
-
-		$file = $this -> files -> temp_dir . $file;
-		echo $file;
-		exit ;
-		$fl = $this -> files -> files($file);
-		print_r($fl);
-
-		//header('Content-Type: image/jpg');
-		//header('Content-Type: image/bmp');
-		//readfile($file);
+		readfile($file);
 	}
 
 	function dir($d1 = '', $d2 = '', $d3 = '', $d4 = '', $d5 = '', $d6 = '', $d7 = '', $d8 = '') {
