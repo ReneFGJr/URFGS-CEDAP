@@ -1,7 +1,191 @@
 <?php
 class files extends CI_model {
-	var $temp_dir = 'D:/jobs/';
+	var $temp_dir = 'D:/tmp/';
 	/* var $temp_dir = 'Z:/3x4/'; */
+	function icon_type($tp) {
+		switch($tp) {
+			case 'jpg' :
+				$nm = 'glyphicon-picture';
+				break;
+			case 'png' :
+				$nm = 'glyphicon-picture';
+				break;
+			default :
+				$nm = 'glyphicon-file';
+		}
+		$sx = '<span class="glyphicon ' . $nm . '" aria-hidden="true"></span>';
+		return ($sx);
+	}
+	
+	function filePreview($id=0,$fl='',$fld='')
+		{
+			$sp = '';
+			$type = $this->filetype($fl);
+			switch ($type)
+				{
+				case 'xxx':
+					break;
+				default:
+					$sx = '<img src="'.base_url('index.php/io/image/'.$fld.'/?dd0='.$id).'">';
+					break;
+				}
+			return($sx);
+		}
+	
+	function download($file)
+		{
+			
+			//header('Content-Type: image/jpg');
+			header('Content-Type: image/bmp');
+			readfile($file);
+		}		
+
+	function filetype($f) {
+		while (strpos($f, '.')) {
+			$f = substr($f, strpos($f, '.') + 1, strlen($f));
+		}
+		$f = lowercase($f);
+		return ($f);
+	}
+
+	function files($pth='') {
+		$sx = '';
+
+		$folders = array();
+		$files = array();
+		$path = $this -> temp_dir;
+		if (strlen($pth) > 0) {
+			$path .= '/' . $pth;
+			$folders[] = '..';
+		}
+		// Open the given path
+
+		if ($handle = opendir($path)) {
+			// Loop through its contents adding folder paths or files to separate arrays
+			// Make sure not to include "." or ".." in the listing.
+
+			while (false !== ($file = readdir($handle))) {
+				if ($file != "." && $file != "..") {
+					if (is_dir($path . "/" . $file)) {
+						$folders[] = $file;
+					} else { $files[] = $file;
+					}
+				}
+			}
+			
+			// Finally close the directory.
+			closedir($handle);
+			return ($files);
+		}
+
+	}
+
+	function listFile($pth = "", $link = '') {
+		$sx = '';
+
+		$folders = array();
+		$files = array();
+		$path = $this -> temp_dir;
+		if (strlen($pth) > 0) {
+			$path .= '/' . $pth;
+			$folders[] = '..';
+		}
+		// Open the given path
+		if ($handle = opendir($path)) {
+			// Loop through its contents adding folder paths or files to separate arrays
+			// Make sure not to include "." or ".." in the listing.
+
+			while (false !== ($file = readdir($handle))) {
+				if ($file != "." && $file != "..") {
+					if (is_dir($path . "/" . $file)) {
+						$folders[] = $file;
+					} else { $files[] = $file;
+					}
+				}
+			}
+
+			$sx = '<table width="100%" class="table" border=0>' . cr();
+			for ($r = 0; $r < count($files); $r++) {
+				$nlink = '<a href="' . base_url($link . $pth . '?dd0=' . $r) . '">';
+				$sx .= '<tr>' . cr();
+				$sx .= '<td width="20">';
+				$sx .= $nlink;
+				//$sx .= '<span class="glyphicon glyphicon-level-up" aria-hidden="true"></span>';
+				$type = $this -> filetype($files[$r]);
+				$sx .= $this -> icon_type($type);
+				//$sx .= '<img src="'.base_url('img/icon/icon_folder.png').'" height="20"></span>'.cr();
+				$sx .= '</a>';
+				$sx .= '</td>' . cr();
+
+				$sx .= '<td>' . cr();
+				$sx .= $nlink;
+				$sx .= $files[$r] . cr();
+				$sx .= '</a>';
+				$sx .= '</td>' . cr();
+				$sx .= '</tr>' . cr();
+			}
+			$sx .= '</table>';
+			// Finally close the directory.
+			closedir($handle);
+			return ($sx);
+		}
+
+	}
+
+	function listDir($pth = "", $link = '') {
+		global $listDirCount;
+
+		$sx = '';
+
+		$folders = array();
+		$files = array();
+		$path = $this -> temp_dir;
+		if (strlen($pth) > 0) {
+			$path .= '/' . $pth;
+			$folders[] = '..';
+		}
+		// Open the given path
+		if ($handle = opendir($path)) {
+			// Loop through its contents adding folder paths or files to separate arrays
+			// Make sure not to include "." or ".." in the listing.
+
+			while (false !== ($file = readdir($handle))) {
+				if ($file != "." && $file != "..") {
+					if (is_dir($path . "/" . $file)) {
+						$folders[] = $file;
+					} else { $files[] = $file;
+					}
+				}
+			}
+			$sx = '<table width="100%" class="table" border=0>' . cr();
+			for ($r = 0; $r < count($folders); $r++) {
+				$nlink = '<a href="' . base_url($link . $folders[$r]) . '">';
+				$sx .= '<tr>' . cr();
+				$sx .= '<td width="20">';
+				$sx .= $nlink;
+				if ($folders[$r] == '.') {
+					$sx .= '<span class="glyphicon glyphicon-level-up" aria-hidden="true"></span>';
+				} else {
+					$sx .= '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>';
+					//$sx .= '<img src="'.base_url('img/icon/icon_folder.png').'" height="20"></span>'.cr();
+				}
+				$sx .= '</a>';
+				$sx .= '</td>' . cr();
+
+				$sx .= '<td>' . cr();
+				$sx .= $nlink;
+				$sx .= $folders[$r] . cr();
+				$sx .= '</a>';
+				$sx .= '</td>' . cr();
+				$sx .= '</tr>' . cr();
+			}
+			$sx .= '</table>';
+			// Finally close the directory.
+			closedir($handle);
+			return ($sx);
+		}
+	}
+
 	function dirscan($dir = '') {
 		if (strlen($dir) == 0) {
 			$dir = $this -> temp_dir;
