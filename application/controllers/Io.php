@@ -68,6 +68,11 @@ class IO extends CI_Controller {
 		$file = $this->files->temp_dir.$file.'/'.$fl[$id];
 		
 		$type = $this->files->filetype($file);
+		if ($type == 'oip') { $type = 'xml'; }
+		if ($type == 'ois') { $type = 'xml'; }
+		if ($type == 'ojp') { $type = 'xml'; }
+		if ($type == 'ojs') { $type = 'xml'; }
+		
 		switch ($type)
 			{
 			case 'jpg':
@@ -75,7 +80,17 @@ class IO extends CI_Controller {
 				break;		
 			case 'bmp':
 				header('Content-Type: image/bmp');
-				break;		
+				break;	
+			case 'xml':
+				$xml=simplexml_load_file($file);
+				echo '<pre>';
+				print_r($xml);
+				echo '</pre>';
+				return('');
+				
+				header("Content-type: text/xml");
+				header('Content-Disposition: filename="'.$fl[$id].'.xml"');
+				break;					
 			case 'pdf':
 				header("Content-type:application/pdf");
 				break;
@@ -85,6 +100,7 @@ class IO extends CI_Controller {
 
 	function dir($d1 = '', $d2 = '', $d3 = '', $d4 = '', $d5 = '', $d6 = '', $d7 = '', $d8 = '') {
 		$this -> load -> model('files');
+		$this -> load -> model('microservices');
 
 		$id = get("dd0");
 
@@ -122,13 +138,38 @@ class IO extends CI_Controller {
 			$preview = $this -> files -> filePreview($id, $fl, $path);
 		} else {
 			$preview = '';
+			$fl = '';
 		}
 		$data['tree'] = $this -> files -> listDir($path, $link);
 		$data['files'] = $this -> files -> listFile($path, $link);
 		$data['files_metadata'] = $preview;
+		$data['actions'] = $this -> microservices -> action($path, $fl);
 		$this -> load -> view('io/home', $data);
 		$this -> footer();
 	}
+
+	function file_delete($pth='')
+		{
+			$this -> load -> model('microservices');
+			$file = get("dd0");
+			$confirm = get("confirm");
+			
+			$data = array();
+			$data['nocab'] = true;
+			$data['link'] = base_url('index.php/io/file_delete/'.$pth);
+			
+			$this->cab($data);
+			
+			$this->load->view('confirm',$data);
+			
+			if ($confirm == '1')
+				{
+					
+					$data['jobs'] = $pth;
+					$data['file'] = $file;
+					$this->microservices->exec('del',$data);
+				}
+		}
 
 	function filescan() {
 		$dir = get("dd1");

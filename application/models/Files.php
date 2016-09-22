@@ -10,29 +10,66 @@ class files extends CI_model {
 			case 'png' :
 				$nm = 'glyphicon-picture';
 				break;
+			case 'wav':
+				$nm = 'glyphicon-film';
+				break;
+			case 'mp3':
+				$nm = 'glyphicon-music';
+				break;
+			case 'mp3':
+				$nm = 'glyphicon-music';
+				break;
+			case 'xml':
+				$nm = 'glyphicon-list-alt';
+				break;
+			case 'oip':
+				$nm = 'glyphicon-list-alt';
+				$tp = 'XML';
+				break;
+			case 'ois':
+				$nm = 'glyphicon-list-alt';
+				$tp = 'XML';
+				break;
+			case 'ojp':
+				$nm = 'glyphicon-list-alt';
+				$tp = 'XML';
+				break;												
+			case 'ojs':
+				$nm = 'glyphicon-list-alt';
+				$tp = 'XML';
+				break;
 			default :
 				$nm = 'glyphicon-file';
 		}
-		$sx = '<span class="glyphicon ' . $nm . '" aria-hidden="true"></span>';
+		$sx = '<span class="glyphicon ' . $nm . '" aria-hidden="true" title="'.$tp.'"></span>';
 		return ($sx);
 	}
-	
-	function filePreview($id=0,$fl='',$fld='')
-		{
-			$sp = '';
-			$type = $this->filetype($fl);
-			$sx = $type;
-			switch ($type)
-				{
-				case 'xxx':
-					break;
-				case 'pdf':
-					$url = base_url('index.php/io/image/'.$fld.'/?dd0='.$id);
-					$sx = '<iframe nome="pdf" width="100%" height="100%" src="'.$url.'">';
-					$sx .= '</iframe>';
-				case 'jpg':
-					$sx .= '<img src="'.base_url('index.php/io/image/'.$fld.'/?dd0='.$id).'" width="100%" id="image_zoom">';
-					$sx .= '
+
+	function filePreview($id = 0, $fl = '', $fld = '') {
+		$sp = '';
+		$type = $this -> filetype($fl);
+		$sx = $type;
+		if ($type == 'oip') { $type = 'xml'; }
+		if ($type == 'ois') { $type = 'xml'; }
+		if ($type == 'ojp') { $type = 'xml'; }
+		if ($type == 'ojs') { $type = 'xml'; }
+		
+		switch ($type) {
+			case 'xxx' :
+				break;
+			case 'pdf' :
+				$url = base_url('index.php/io/image/' . $fld . '/?dd0=' . $id);
+				$sx = '<iframe nome="pdf" width="100%" height="100%" src="' . $url . '">';
+				$sx .= '</iframe>';
+				break;
+			case 'xml' :
+				$url = base_url('index.php/io/image/' . $fld . '/?dd0=' . $id.'&'.$fl.'.xml');
+				$sx = '<iframe nome="pdf" width="100%" height="100%" src="' . $url . '">';
+				$sx .= '</iframe>';
+				break;				
+			case 'bmp' :
+				$sx .= '<img src="' . base_url('index.php/io/image/' . $fld . '/?dd0=' . $id) . '" width="100%" id="image_zoom">';
+				$sx .= '
 						<script>
 						$(\'#image_zoom\').elevateZoom({
 							  /* zoomType : "inner", */
@@ -44,20 +81,34 @@ class files extends CI_model {
 						});
 					</script>					
 					';
-					break;
-				default:
-					$sx .= 'no preview';
-				}
-			return($sx);
+				break;
+			case 'jpg' :
+				$sx .= '<img src="' . base_url('index.php/io/image/' . $fld . '/?dd0=' . $id) . '" width="100%" id="image_zoom">';
+				$sx .= '
+						<script>
+						$(\'#image_zoom\').elevateZoom({
+							  /* zoomType : "inner", */
+							  zoomType	: "lens",
+							  /* lensShape : "round", */
+							  lensSize    : 250,
+							  zoomWindowPosition: 10,
+							  scrollZoom : true
+						});
+					</script>					
+					';
+				break;
+			default :
+				$sx .= 'no preview';
 		}
-	
-	function download($file)
-		{
-			
-			//header('Content-Type: image/jpg');
-			header('Content-Type: image/bmp');
-			readfile($file);
-		}		
+		return ($sx);
+	}
+
+	function download($file) {
+
+		//header('Content-Type: image/jpg');
+		header('Content-Type: image/bmp');
+		readfile($file);
+	}
 
 	function filetype($f) {
 		while (strpos($f, '.')) {
@@ -67,7 +118,13 @@ class files extends CI_model {
 		return ($f);
 	}
 
-	function files($pth='') {
+	function without_type($f) {
+		$type = $this -> filetype($f);
+		$f = troca($f, '.' . $type, '');
+		return ($f);
+	}
+
+	function files($pth = '') {
 		$sx = '';
 
 		$folders = array();
@@ -91,7 +148,7 @@ class files extends CI_model {
 					}
 				}
 			}
-			
+
 			// Finally close the directory.
 			closedir($handle);
 			return ($files);
@@ -124,24 +181,33 @@ class files extends CI_model {
 			}
 
 			$sx = '<table width="100%" class="table" border=0>' . cr();
+			$xname = '';
 			for ($r = 0; $r < count($files); $r++) {
+				/* name */
+				$name = $this -> files -> without_type($files[$r]);
+
+				/* nlink */
 				$nlink = '<a href="' . base_url($link . $pth . '?dd0=' . $r) . '">';
-				$sx .= '<tr>' . cr();
+				$type = $this -> filetype($files[$r]);
+
+				if ($xname != $name) {
+					if ($r > 0) { $sx .= '</td>' . cr();
+					}
+					$sx .= '<tr>' . cr();
+					$sx .= '<td class="small">' . cr();
+					$sx .= $name . cr();
+					$sx .= '</td>' . cr();
+				}
+
 				$sx .= '<td width="20">';
 				$sx .= $nlink;
-				//$sx .= '<span class="glyphicon glyphicon-level-up" aria-hidden="true"></span>';
-				$type = $this -> filetype($files[$r]);
 				$sx .= $this -> icon_type($type);
-				//$sx .= '<img src="'.base_url('img/icon/icon_folder.png').'" height="20"></span>'.cr();
 				$sx .= '</a>';
 				$sx .= '</td>' . cr();
 
-				$sx .= '<td>' . cr();
-				$sx .= $nlink;
-				$sx .= $files[$r] . cr();
-				$sx .= '</a>';
-				$sx .= '</td>' . cr();
-				$sx .= '</tr>' . cr();
+				$xname = $name;
+			}
+			if ($r > 0) { $sx .= '</td>' . cr();
 			}
 			$sx .= '</table>';
 			// Finally close the directory.
@@ -176,9 +242,13 @@ class files extends CI_model {
 					}
 				}
 			}
+			$pth2 = $pth;
+			if (strlen($pth) > 0) {
+				$pth2 = $pth . '/';
+			}
 			$sx = '<table width="100%" class="table" border=0>' . cr();
 			for ($r = 0; $r < count($folders); $r++) {
-				$nlink = '<a href="' . base_url($link . $folders[$r]) . '">';
+				$nlink = '<a href="' . base_url($link . $pth2 . $folders[$r]) . '">';
 				$sx .= '<tr>' . cr();
 				$sx .= '<td width="20">';
 				$sx .= $nlink;
@@ -297,7 +367,7 @@ class files extends CI_model {
 				$dd = array();
 				$dd['jobs'] = $job;
 				$dd['file'] = $files[$id];
-				
+
 				$this -> microservices -> exec(1, $dd);
 				$sx .= '<span onclick="newxy(\'' . base_url('index.php/job/microservice/' . $job . '/' . $files[$id] . '/' . '1') . '\',300,300);" class="btn btn-primary">';
 				$sx .= 'create middle image';

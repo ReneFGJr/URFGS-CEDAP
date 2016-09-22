@@ -1,7 +1,21 @@
 <?php
 class microservices extends CI_model {
-	function le($id = 0) {
-		$sql = "select * from microservice where s_active = 1";
+	
+	function action($pth='',$file='')
+		{
+			$sx = $pth.'<hr>'.$file.'<hr>';
+			
+			$sx .= '<button onclick="newxy(\''.base_url('index.php/io/file_delete/'.$pth.'?dd0='.$this->files->without_type($file)).'\',750,200);" class="bnt btn-danger">';
+			$sx .= 'Delete File';
+			$sx .= '</button>';
+			
+			
+			return($sx);
+		}
+	function le($id = '') {
+		$idx = round($id);
+		$sql = "select * from microservice where s_active = 1 and (id_s = $idx or s_func = '$id')";
+		
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
 		if (count($rlt) > 0) {
@@ -45,13 +59,30 @@ class microservices extends CI_model {
 			$filen = troca($filen, '.TIFF', '.jpg');
 
 			$file2 = $this -> files -> temp_dir . $job . '/' . $filen;
+			
 			$ln = troca($ln, '$1', $file1);
 			$ln = troca($ln, '$2', $file2);
 			if (strlen($ln) > 0)
 				{
-					shell_exec($ln);
+					$t = $sv['s_language'];
+					switch ($t)
+						{
+						case 'dos':
+							shell_exec($ln);
+							break;
+						case 'php';
+							echo $ln;
+							eval($ln.';');
+							break;
+						}
+					
 				}
 		}
 	}
 }
+
+function move_file_to_undo($f1='')
+	{
+		
+	}
 ?>

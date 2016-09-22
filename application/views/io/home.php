@@ -4,7 +4,7 @@
 			File Explorer 
 			<?php echo $tree; ?>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-2">
 			File System
 			<?php echo $files; ?>
 		</div>
@@ -12,8 +12,10 @@
 			<?php echo $files_metadata;?>
 			File Preview
 		</div>
-		<div class="col-md-1">
+		<div class="col-md-2">
 			File Action
+			
+			<?php echo $actions;?>
 		</div>
 	</div>
 </div>
