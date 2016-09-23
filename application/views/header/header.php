@@ -15,6 +15,7 @@ if (!(isset($bootstrap))) { $bootstrap = 1;
 	}
  ?>
 	<?php
+	array_push($js,'form_sisdoc.js');
 	array_push($js,'jquery.mask.js');
 	array_push($js,'jquery.elevatezoom.js');
 	for ($r = 0; $r < count($js); $r++) {

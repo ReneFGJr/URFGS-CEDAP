@@ -29,7 +29,7 @@ $us_nome = $_SESSION['user'];
 					</ul>
 				</li>
 				<li>
-				<a href="<?php echo base_url('index.php/main/filescan');?>">File Scan</a>
+				<a href="<?php echo base_url('index.php/main/filescan'); ?>">File Scan</a>
 				</li>
 				<!--
 				<li class="dropdown">
@@ -47,13 +47,34 @@ $us_nome = $_SESSION['user'];
 				</ul>
 				</li>
 				-->
+
+				<?php
+				$rd = $this;
+				if (isset($rd->uri->rsegments))
+				{
+					$rd = $rd->uri->rsegments;
+					if (($rd[1] == 'io') and (isset($rd[3])) and (strlen($rd[3]) > 0))
+						{
+							echo '				
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Utilitários <span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li>
+										<a href="#" onclick="newxy(\''.base_url('index.php/io/dir_createpreview/'.$rd[3]).'\',400,600);">Criar Miniaturas e Preview</a>
+									</li>
+								</ul>
+							</li>';		
+						}
+					
+				}
+				?>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cadastro <span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li>
 							<a href="#">Classes</a>
 						</li>
-		</li>
+				</li>
 				<li>
 				<a href="<?php echo base_url('index.php/admin/users'); ?>">Usuários do Sistema</a>
 				</li>
@@ -61,29 +82,29 @@ $us_nome = $_SESSION['user'];
 				<a href="<?php echo base_url('index.php/admin/filiais'); ?>">Matriz e Filiais</a>
 				</li>
 				<?php
-					if (perfil("#ADM#GEG")) {
-						echo '<li role="separator" class="divider"></li>' . cr();
-						echo '<li><a href="' . base_url('index.php/admin/logins') . '">Atribuir Perfil a usuários</a></li>' . cr();
-					}
+				if (perfil("#ADM#GEG")) {
+					echo '<li role="separator" class="divider"></li>' . cr();
+					echo '<li><a href="' . base_url('index.php/admin/logins') . '">Atribuir Perfil a usuários</a></li>' . cr();
+				}
 				?>
 			</ul>
 			<?php
-				//if (perfil("#ADM")) 
-				{
-					echo '<li class="dropdown">' . cr();
-					echo '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrador <span class="caret"></span></a>' . cr();
-					echo '<ul class="dropdown-menu">' . cr();
-					echo '	<li>' . cr();
-					echo '		<li><a href="' . base_url('index.php/admin/perfil') . '">Cadastro de Perfis</a></li>' . cr();
-					echo '	</li>' . cr();
-					echo '	<li>' . cr();
-					echo '		<li><a href="' . base_url('index.php/admin/comunicacao_1') . '">Mensagens do Sistema</a></li>' . cr();
-					echo '	</li>' . cr();	
-					echo '	<li>' . cr();
-					echo '		<li><a href="' . base_url('index.php/admin/colletion') . '">Coleções (cadastro)</a></li>' . cr();
-					echo '	</li>' . cr();									
-					echo '</ul>' . cr();
-				}
+			//if (perfil("#ADM"))
+			{
+				echo '<li class="dropdown">' . cr();
+				echo '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrador <span class="caret"></span></a>' . cr();
+				echo '<ul class="dropdown-menu">' . cr();
+				echo '	<li>' . cr();
+				echo '		<li><a href="' . base_url('index.php/admin/perfil') . '">Cadastro de Perfis</a></li>' . cr();
+				echo '	</li>' . cr();
+				echo '	<li>' . cr();
+				echo '		<li><a href="' . base_url('index.php/admin/comunicacao_1') . '">Mensagens do Sistema</a></li>' . cr();
+				echo '	</li>' . cr();
+				echo '	<li>' . cr();
+				echo '		<li><a href="' . base_url('index.php/admin/colletion') . '">Coleções (cadastro)</a></li>' . cr();
+				echo '	</li>' . cr();
+				echo '</ul>' . cr();
+			}
 			?>
 
 			</li>
@@ -100,7 +121,8 @@ $us_nome = $_SESSION['user'];
 			-->
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <?php echo $us_nome; ?> <span class="caret"></span></a>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <?php echo $us_nome; ?>
+					<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li>
 							<a href="<?php echo base_url('index.php/main/myaccount'); ?>">Meus Dados</a>

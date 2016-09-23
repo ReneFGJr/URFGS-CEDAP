@@ -65,36 +65,39 @@ class IO extends CI_Controller {
 		}
 
 		$fl = $this -> files -> files($file);
-		$file = $this->files->temp_dir.$file.'/'.$fl[$id];
-		
-		$type = $this->files->filetype($file);
-		if ($type == 'oip') { $type = 'xml'; }
-		if ($type == 'ois') { $type = 'xml'; }
-		if ($type == 'ojp') { $type = 'xml'; }
-		if ($type == 'ojs') { $type = 'xml'; }
-		
-		switch ($type)
-			{
-			case 'jpg':
+		$file = $this -> files -> temp_dir . $file . '/' . $fl[$id];
+
+		$type = $this -> files -> filetype($file);
+		if ($type == 'oip') { $type = 'xml';
+		}
+		if ($type == 'ois') { $type = 'xml';
+		}
+		if ($type == 'ojp') { $type = 'xml';
+		}
+		if ($type == 'ojs') { $type = 'xml';
+		}
+
+		switch ($type) {
+			case 'jpg' :
 				header('Content-Type: image/jpg');
-				break;		
-			case 'bmp':
+				break;
+			case 'bmp' :
 				header('Content-Type: image/bmp');
-				break;	
-			case 'xml':
-				$xml=simplexml_load_file($file);
+				break;
+			case 'xml' :
+				$xml = simplexml_load_file($file);
 				echo '<pre>';
 				print_r($xml);
 				echo '</pre>';
-				return('');
-				
+				return ('');
+
 				header("Content-type: text/xml");
-				header('Content-Disposition: filename="'.$fl[$id].'.xml"');
-				break;					
-			case 'pdf':
+				header('Content-Disposition: filename="' . $fl[$id] . '.xml"');
+				break;
+			case 'pdf' :
 				header("Content-type:application/pdf");
 				break;
-			}
+		}
 		readfile($file);
 	}
 
@@ -138,6 +141,7 @@ class IO extends CI_Controller {
 			$preview = $this -> files -> filePreview($id, $fl, $path);
 		} else {
 			$preview = '';
+			$preview = $this -> files -> thumb($path);
 			$fl = '';
 		}
 		$data['tree'] = $this -> files -> listDir($path, $link);
@@ -148,28 +152,119 @@ class IO extends CI_Controller {
 		$this -> footer();
 	}
 
-	function file_delete($pth='')
-		{
-			$this -> load -> model('microservices');
-			$file = get("dd0");
-			$confirm = get("confirm");
-			
-			$data = array();
-			$data['nocab'] = true;
-			$data['link'] = base_url('index.php/io/file_delete/'.$pth);
-			
-			$this->cab($data);
-			
-			$this->load->view('confirm',$data);
-			
-			if ($confirm == '1')
-				{
-					
-					$data['jobs'] = $pth;
-					$data['file'] = $file;
-					$this->microservices->exec('del',$data);
-				}
+	function file_convert($pth = '') {
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
+
+		$data['nocab'] = true;
+		$this -> cab($data);
+
+		$file = get("dd0") . '.tif';
+		$data = array();
+		$data['jobs'] = $pth;
+		$data['files'] = array($file);
+
+		$this -> files -> create_jpg_from_tiff($data);
+
+		$data['content'] = '<script> wclose(); </script>';
+		$this -> load -> view('content', $data);
+	}
+
+	function dir_createpreview($pth = '') {
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
+		$files = $this -> files -> files($pth);
+		$data['nocab'] = true;
+		$this -> cab($data);
+
+		for ($r = 0; $r < count($files); $r++) {
+			$data['content'] = 'Convertendo ' . $files[$r] . '<br>';
+			$data['title'] = '';
+			$type = $this -> files -> filetype($files[$r]);
+
+			if ($type == 'tif') {
+
+				$file = $files[$r];
+				$data = array();
+				$data['jobs'] = $pth;
+				$data['files'] = array($file);
+
+				$this -> files -> create_jpg_from_tiff($data);
+
+				$this -> load -> view('content', $data);
+				$this -> output -> append_output(ob_get_contents());
+			}
 		}
+		$data['content'] = '<script> wclose(); </script>';
+		$this -> load -> view('content', $data);
+	}
+
+	function file_conserve($pth = '') {
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
+		$file = get("dd0");
+		$confirm = get("confirm");
+
+		$data = array();
+		$data['nocab'] = true;
+		$data['link'] = base_url('index.php/io/file_conserve/' . $pth);
+
+		$this -> cab($data);
+
+		$this -> load -> view('confirm', $data);
+
+		if ($confirm == '1') {
+
+			$data['jobs'] = $pth;
+			$data['file'] = $file;
+			$data['dir'] = $this -> files -> temp_dir;
+			$this -> microservices -> exec('preserv', $data);
+
+			$data['content'] = '<script> wclose(); </script>';
+			$this -> load -> view('content', $data);
+		}
+	}
+
+	function file_undelete($pth = '') {
+		$data['nocab'] = true;
+		$this -> cab($data);
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
+		$file = get("dd0");
+
+		$data = array();
+		$data['jobs'] = $pth;
+		$data['file'] = $file;
+		$data['dir'] = $this -> files -> temp_dir;
+		$this -> microservices -> exec('undelete', $data);
+		$data['content'] = '<script> wclose(); </script>';
+		$this -> load -> view('content', $data);
+	}
+
+	function file_delete($pth = '') {
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
+		$file = get("dd0");
+		$confirm = get("confirm");
+
+		$data = array();
+		$data['nocab'] = true;
+		$data['link'] = base_url('index.php/io/file_delete/' . $pth);
+		$this -> cab($data);
+
+		$this -> load -> view('confirm', $data);
+
+		if ($confirm == '1') {
+
+			$data['jobs'] = $pth;
+			$data['file'] = $file;
+			$data['dir'] = $this -> files -> temp_dir;
+			$this -> microservices -> exec('del', $data);
+
+			$data['content'] = '<script> wclose(); </script>';
+			$this -> load -> view('content', $data);
+		}
+	}
 
 	function filescan() {
 		$dir = get("dd1");

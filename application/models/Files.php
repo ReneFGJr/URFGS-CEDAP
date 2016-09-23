@@ -2,6 +2,7 @@
 class files extends CI_model {
 	var $temp_dir = 'D:/tmp/';
 	/* var $temp_dir = 'Z:/3x4/'; */
+
 	function icon_type($tp) {
 		switch($tp) {
 			case 'jpg' :
@@ -10,38 +11,38 @@ class files extends CI_model {
 			case 'png' :
 				$nm = 'glyphicon-picture';
 				break;
-			case 'wav':
+			case 'wav' :
 				$nm = 'glyphicon-film';
 				break;
-			case 'mp3':
+			case 'mp3' :
 				$nm = 'glyphicon-music';
 				break;
-			case 'mp3':
+			case 'mp3' :
 				$nm = 'glyphicon-music';
 				break;
-			case 'xml':
+			case 'xml' :
 				$nm = 'glyphicon-list-alt';
 				break;
-			case 'oip':
+			case 'oip' :
 				$nm = 'glyphicon-list-alt';
 				$tp = 'XML';
 				break;
-			case 'ois':
+			case 'ois' :
 				$nm = 'glyphicon-list-alt';
 				$tp = 'XML';
 				break;
-			case 'ojp':
+			case 'ojp' :
 				$nm = 'glyphicon-list-alt';
 				$tp = 'XML';
-				break;												
-			case 'ojs':
+				break;
+			case 'ojs' :
 				$nm = 'glyphicon-list-alt';
 				$tp = 'XML';
 				break;
 			default :
 				$nm = 'glyphicon-file';
 		}
-		$sx = '<span class="glyphicon ' . $nm . '" aria-hidden="true" title="'.$tp.'"></span>';
+		$sx = '<span class="glyphicon ' . $nm . '" aria-hidden="true" title="' . $tp . '"></span>';
 		return ($sx);
 	}
 
@@ -49,11 +50,15 @@ class files extends CI_model {
 		$sp = '';
 		$type = $this -> filetype($fl);
 		$sx = $type;
-		if ($type == 'oip') { $type = 'xml'; }
-		if ($type == 'ois') { $type = 'xml'; }
-		if ($type == 'ojp') { $type = 'xml'; }
-		if ($type == 'ojs') { $type = 'xml'; }
-		
+		if ($type == 'oip') { $type = 'xml';
+		}
+		if ($type == 'ois') { $type = 'xml';
+		}
+		if ($type == 'ojp') { $type = 'xml';
+		}
+		if ($type == 'ojs') { $type = 'xml';
+		}
+
 		switch ($type) {
 			case 'xxx' :
 				break;
@@ -63,10 +68,10 @@ class files extends CI_model {
 				$sx .= '</iframe>';
 				break;
 			case 'xml' :
-				$url = base_url('index.php/io/image/' . $fld . '/?dd0=' . $id.'&'.$fl.'.xml');
+				$url = base_url('index.php/io/image/' . $fld . '/?dd0=' . $id . '&' . $fl . '.xml');
 				$sx = '<iframe nome="pdf" width="100%" height="100%" src="' . $url . '">';
 				$sx .= '</iframe>';
-				break;				
+				break;
 			case 'bmp' :
 				$sx .= '<img src="' . base_url('index.php/io/image/' . $fld . '/?dd0=' . $id) . '" width="100%" id="image_zoom">';
 				$sx .= '
@@ -87,11 +92,8 @@ class files extends CI_model {
 				$sx .= '
 						<script>
 						$(\'#image_zoom\').elevateZoom({
-							  /* zoomType : "inner", */
-							  zoomType	: "lens",
-							  /* lensShape : "round", */
-							  lensSize    : 250,
-							  zoomWindowPosition: 10,
+							  zoomType : "inner",
+							  cursor: "crosshair",
 							  scrollZoom : true
 						});
 					</script>					
@@ -131,11 +133,10 @@ class files extends CI_model {
 		$files = array();
 		$path = $this -> temp_dir;
 		if (strlen($pth) > 0) {
-			$path .= '/' . $pth;
+			$path .= $pth;
 			$folders[] = '..';
 		}
 		// Open the given path
-
 		if ($handle = opendir($path)) {
 			// Loop through its contents adding folder paths or files to separate arrays
 			// Make sure not to include "." or ".." in the listing.
@@ -181,6 +182,7 @@ class files extends CI_model {
 			}
 
 			$sx = '<table width="100%" class="table" border=0>' . cr();
+			$sx .= '<tr><td colspan=5>'.'<a href="'.base_url('index.php/io/dir/'.$pth).'"><span class="glyphicon glyphicon-th" aria-hidden="true"></span> '.'root'.'</a>'.'</td></tr>'.cr();
 			$xname = '';
 			for ($r = 0; $r < count($files); $r++) {
 				/* name */
@@ -312,90 +314,65 @@ class files extends CI_model {
 
 	}
 
-	function thumb($job = '', $id = 0) {
-		$dir = $this -> temp_dir . '/' . $job;
-		$files = scandir($dir, 2);
+	function create_jpg_from_tiff($data) {
+		$files = $data['files'];
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
 
-		$sx = '<div class="row">';
-		$sx .= '<div class="col-md-3">';
-
-		$sx .= '<nav aria-label="...">
-			  <ul class="pagination">' . cr();
-		$n = 1;
 		for ($r = 0; $r < count($files); $r++) {
-			$mini = troca($job . '/thumb/' . $files[$r], '.tif', '.bmp');
-			if (strpos($mini, '.bmp')) {
-				if ($r == $id) {
-					$sa = 'class="active"';
-				} else {
-					$sa = '';
-				}
+	
+			/* conversão */
+			$filen = $files[$r];
 
-				$link = '<a href="' . base_url('index.php/job/view/' . $job . '/' . $r) . '" style="width: 40px;">';
-				$sx .= '<li ' . $sa . ' class="text-center">' . $link . $n . '</a></li>' . cr();
-				$n++;
+			if ($this -> filetype($filen) == 'tif') {
+				$filen = troca($filen, '.tif', '.jpg');
+				$filen = troca($filen, '.tiff', '.jpg');
+				$filen = troca($filen, '.TIF', '.jpg');
+				$filen = troca($filen, '.TIFF', '.jpg');
+
+				/* PART I */
+				$data['file'] = $files[$r];
+				$data['file2'] = $filen;
+				$this -> microservices -> exec('jpg2048', $data);
+
+				/* PART II */
+				$data['file'] = $files[$r];
+				$data['file2'] = 'thumb/' . $filen;
+				$this -> microservices -> exec('jpg320', $data);
+				$data['content'] = 'Convertendo ' . $files[$r] . '<br>';
+				$data['title'] = '';
+				$this -> load -> view('content', $data);
+			} else {
+				$data['content'] = 'Format inválido ' . $files[$r] . '<br>';
+				$data['title'] = '';
+				$this -> load -> view('content', $data);				
 			}
 		}
-		$sx .= '</ul></nav>';
+	}
 
+	function thumb($job = '') {
+		$dir = $job;
+		$files = $this -> files -> files($dir);
+		$sx = '';
 		$t = 0;
 		$m = 0;
-		for ($r = $id; $r < count($files); $r++) {
-			$mini = troca($job . '/thumb/' . $files[$r], '.tif', '.bmp');
-			if ($m < 5) {
-				if (strpos($mini, '.bmp')) {
-					//$sx .= $files[$r];
-					$link = '<a href="' . base_url('index.php/job/view/' . $job . '/' . $r) . '">';
-					$sx .= $link . '<img src="' . base_url('index.php/job/file/' . $mini) . '" width="150" style="border:1px;">' . '</a>';
-					$sx .= '<br>';
-					//$sx .= $mini;
-					$sx .= '<br>';
-					$t = $t + 2;
-					$m++;
-				}
+		for ($r = 0; $r < count($files); $r++) {
+
+			if (strpos($files[$r], '.jpg')) {
+				//$sx .= $files[$r];
+				$mini = $job . '/' . $files[$r];
+				$link = '<a href="' . base_url('index.php/io/dir/' . $job . '?dd0=' . $r) . '">';
+				$sx .= $link . '<img src="' . base_url('index.php/job/file/' . $mini) . '" width="150" style="border:1px; margin: 8px; box-shadow: 5px 5px 5px grey;">' . '</a>';
 			}
 		}
-
-		$midle = troca($job . '/' . $files[$id], '.tif', '.jpg');
-		$sx .= '</div>' . cr();
-		$sx .= '<div class="col-md-9">';
-		if ($id > 0) {
-
-			$file = $this -> temp_dir . $midle;
-
-			if (!file_exists($file)) {
-				$dd = array();
-				$dd['jobs'] = $job;
-				$dd['file'] = $files[$id];
-
-				$this -> microservices -> exec(1, $dd);
-				$sx .= '<span onclick="newxy(\'' . base_url('index.php/job/microservice/' . $job . '/' . $files[$id] . '/' . '1') . '\',300,300);" class="btn btn-primary">';
-				$sx .= 'create middle image';
-				$sx .= '</span>';
-			}
-			$midle = troca($files[$id], '.tif', '.jpg');
-			$sx .= '<img src="' . base_url('index.php/job/file/' . $job . '/' . $midle) . '" id="image_fix" width="100%" style="border:1px;">';
-			$sx .= '<br><br>';
-
-			$sx .= '<a href="' . base_url('index.php/job/file/' . $job . '/' . $midle) . '" class="btn btn-primary" target="_' . $file . '">' . msg('view_full') . '</a>';
-			$sx .= '<script>
-						$(\'#image_fix\').elevateZoom({
-							  zoomType	: "lens",
-							  /* lensShape : "round", */
-							  lensSize    : 300,
-							  scrollZoom : true
-						});
-					</script>';
-			/* delete imagem */
-			$sx .= ' ';
-			$sx .= '<span onclick="newxy(\'' . base_url('index.php/job/file_delete/' . $job . '/' . $midle) . '\',600,300);" class="btn btn-danger">' . msg('delete_file') . '</a>';
-
-		}
-		$sx .= '</div>';
-		$sx .= '<div class="col-md-12" style="padding: 0px 10px;">';
-		$sx .= 'Metadados';
-		$sx .= '</div>';
-		$sx .= '</div>';
+		/*
+		 $sx .= '
+		 <script type="text/javascript">
+		 $('.myContainer > .myItem').rondell([options][, callback]);
+		 </script>
+		 ';
+		 *
+		 */
 		return ($sx);
 	}
 

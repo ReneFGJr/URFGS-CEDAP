@@ -10,7 +10,6 @@
 		</div>
 		<div class="col-md-6">
 			<?php echo $files_metadata;?>
-			File Preview
 		</div>
 		<div class="col-md-2">
 			File Action
