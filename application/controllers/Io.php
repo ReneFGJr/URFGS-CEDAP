@@ -137,6 +137,9 @@ class IO extends CI_Controller {
 		}
 		$files = $this -> files -> files($path);
 		if (strlen($id) > 0) {
+			if (!isset($files[$id])) {
+				redirect(base_url('index.php/io/dir/' . $d1));
+			}
 			$fl = $files[$id];
 			$preview = $this -> files -> filePreview($id, $fl, $path);
 		} else {
@@ -197,6 +200,32 @@ class IO extends CI_Controller {
 		}
 		$data['content'] = '<script> wclose(); </script>';
 		$this -> load -> view('content', $data);
+	}
+
+	function file_access($pth = '') {
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
+		$file = get("dd0");
+		$confirm = get("confirm");
+
+		$data = array();
+		$data['nocab'] = true;
+		$data['link'] = base_url('index.php/io/file_access/' . $pth);
+
+		$this -> cab($data);
+
+		$this -> load -> view('confirm', $data);
+
+		if ($confirm == '1') {
+
+			$data['jobs'] = $pth;
+			$data['file'] = $file;
+			$data['dir'] = $this -> files -> temp_dir;
+			$this -> microservices -> exec('access', $data);
+
+			$data['content'] = '<script> wclose(); </script>';
+			$this -> load -> view('content', $data);
+		}
 	}
 
 	function file_conserve($pth = '') {
@@ -274,6 +303,10 @@ class IO extends CI_Controller {
 		$txt = $this -> files -> dirscan($dir);
 		$data['content'] = $txt;
 		$this -> load -> view('content', $data);
+	}
+
+	function jobs_metadata($path) {
+
 	}
 
 }
