@@ -94,6 +94,10 @@ class IO extends CI_Controller {
 				header("Content-type: text/xml");
 				header('Content-Disposition: filename="' . $fl[$id] . '.xml"');
 				break;
+			case 'htm' :
+				header("Content-type: text/html");
+				header('Content-Disposition: filename="' . $fl[$id] . '.xml"');
+				break;
 			case 'pdf' :
 				header("Content-type:application/pdf");
 				break;
@@ -170,6 +174,41 @@ class IO extends CI_Controller {
 		$this -> files -> create_jpg_from_tiff($data);
 
 		$data['content'] = '<script> wclose(); </script>';
+		$this -> load -> view('content', $data);
+	}
+
+	function dir_normatize($pth = '',$d1='',$d2='',$d3='',$d4='',$d5='',$d6='',$d7='') {
+		if (strlen($d1) > 0) { $pth .= '/'.$d1; }
+		if (strlen($d2) > 0) { $pth .= '/'.$d2; }
+		if (strlen($d3) > 0) { $pth .= '/'.$d3; }
+		if (strlen($d4) > 0) { $pth .= '/'.$d4; }
+		if (strlen($d5) > 0) { $pth .= '/'.$d5; }
+		if (strlen($d6) > 0) { $pth .= '/'.$d6; }
+		if (strlen($d7) > 0) { $pth .= '/'.$d7; }
+
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
+		$files = $this -> files -> files($pth);
+		$data['nocab'] = true;
+		$this -> cab($data);
+
+		for ($r = 0; $r < count($files); $r++) {
+			$data['content'] = 'Convertendo ' . $files[$r] . '<br>';
+			$data['title'] = '';
+			$type = $this -> files -> filetype($files[$r]);
+			$f1 = $files[$r];
+			$f2 = name_normalize($files[$r]);
+			echo '<br>==>'.$f1.' '.$f2;
+			if ($f1 != $f2)
+				{
+					echo ' rename';
+					$data['jobs'] = $pth;
+					$data['file'] = $f1;
+					$data['dir'] = $this->files->temp_dir;
+					$this->microservices->exec('rename',$data);
+				}
+		}
+//		$data['content'] = '<script> wclose(); </script>';
 		$this -> load -> view('content', $data);
 	}
 
@@ -305,7 +344,36 @@ class IO extends CI_Controller {
 		$this -> load -> view('content', $data);
 	}
 
-	function jobs_metadata($path) {
+	function jobs_metadata($pth) {
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
+		$file = get("dd0");
+		$confirm = get("confirm");
+
+		$data = array();
+
+		$cp = array();
+		array_push($cp, array('$H8', '', '', False, True));
+		$sql = "select * from collections where c_status = 1 ";
+		array_push($cp, array('$Q id_c:c_name:' . $sql, '', 'Selecione o Projeto', True, True));
+		//array_push($cp, array('$D8', '', 'Data do processamento', True, True));
+		array_push($cp, array('$B8', '', 'Gerar Metados & Cover page >>', False, True));
+		array_push($cp, array('$T80:5', '', 'Informações', False, True));
+		$form = new form;
+		$form -> id = 0;
+		$form -> cp = $cp;
+		$data['title'] = 'Metadados';
+		$data['content'] = $form -> editar($cp, '');
+
+		if ($form -> saved > 0) {;
+			$this -> microservices -> cover_sheet(get("dd1"), $pth);
+		} else {
+
+			$data['nocab'] = true;
+			$data['link'] = base_url('index.php/io/jobs_metadata/' . $pth);
+			$this -> cab($data);
+			$this -> load -> view('content', $data);
+		}
 
 	}
 

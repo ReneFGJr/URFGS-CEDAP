@@ -1,0 +1,25 @@
+/******************** Font size ***********************/
+.small {
+	color: #888888;
+	font-size: 11px;
+}
+.middle {
+	font-size: 13px;
+}
+.big {
+	font-size: 15px;
+}
+
+.superbig {
+	font-size: 18px;
+}
+.xxxbig {
+	font-size: 23px;
+}
+
+
+/* Color */
+.white
+	{
+		color: #fefefe;
+	}

@@ -12,7 +12,7 @@ class microservices extends CI_model {
 		if (strpos($file, '.tif')) {
 			$file2 = troca($file, '.tiff', '.jpg');
 			$file2 = troca($file2, '.tiff', '.jpg');
-			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/file_convert/' . $pth . '?dd0=' . $this -> files -> without_type($file)) .$conf. '&dd1=jpg\',750,200);" class="btn btn-success">';
+			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/file_convert/' . $pth . '?dd0=' . $this -> files -> without_type($file)) . $conf . '&dd1=jpg\',750,200);" class="btn btn-success">';
 			$sx .= 'Create Preview';
 			$sx .= '</button>';
 		}
@@ -25,33 +25,33 @@ class microservices extends CI_model {
 
 		/* acao de descrever o projeto */
 		if (!(strpos($pth, '/')) and (strlen($file) == 0)) {
-			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/jobs_metadata/' . $pth . '?dd0=' . $this -> files -> without_type($file)) . $conf.'\',750,600);" class="btn btn-success" style="width: 100%">';
+			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/jobs_metadata/' . $pth . '?dd0=' . $this -> files -> without_type($file)) . $conf . '\',750,600);" class="btn btn-success" style="width: 100%">';
 			$sx .= 'Criar Dados do Job';
 			$sx .= '</button>';
 		}
 
 		/* ações para os tipo */
 		if (!(strpos($pth, '/')) and $img) {
-			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/file_conserve/' . $pth . '?dd0=' . $this -> files -> without_type($file)) .$conf. '\',750,200);" class="btn btn-success" style="width: 100%">';
+			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/file_conserve/' . $pth . '?dd0=' . $this -> files -> without_type($file)) . $conf . '\',750,200);" class="btn btn-success" style="width: 100%">';
 			$sx .= 'Matriz para Preservação';
 			$sx .= '</button>';
 
 			$sx .= '<br>';
 			$sx .= '<br>';
 
-			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/file_access/' . $pth . '?dd0=' . $this -> files -> without_type($file)) . $conf.'\',750,200);" class="btn btn-primary" style="width: 100%">';
+			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/file_access/' . $pth . '?dd0=' . $this -> files -> without_type($file)) . $conf . '\',750,200);" class="btn btn-primary" style="width: 100%">';
 			$sx .= 'Matriz para Acesso';
 			$sx .= '</button>';
 
 			$sx .= '<br>';
 			$sx .= '<br>';
 
-			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/file_delete/' . $pth . '?dd0=' . $this -> files -> without_type($file)) .$conf. '\',750,200);" class="btn btn-danger" style="width: 100%">';
+			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/file_delete/' . $pth . '?dd0=' . $this -> files -> without_type($file)) . $conf . '\',750,200);" class="btn btn-danger" style="width: 100%">';
 			$sx .= 'Delete File';
 			$sx .= '</button>';
 		}
 		if (strpos($pth, 'undo') and $img) {
-			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/file_undelete/' . $pth . '?dd0=' . $this -> files -> without_type($file)) .$conf. '\',750,200);" class="btn btn-success" style="width: 100%">';
+			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/file_undelete/' . $pth . '?dd0=' . $this -> files -> without_type($file)) . $conf . '\',750,200);" class="btn btn-success" style="width: 100%">';
 			$sx .= 'Undelete File';
 			$sx .= '</button>';
 		}
@@ -123,9 +123,116 @@ class microservices extends CI_model {
 		}
 	}
 
+	function cover_sheet($id, $path = '') {
+		$this -> load -> helper('tcpdf');
+
+		/* Load Model */
+		$model = 'colletions';
+		$this -> load -> model($model);
+		$data = $this -> $model -> le($id);
+		$file = $this -> files -> temp_dir . $path;
+		$fl = $file . '/' . $path . '.OIP';
+		$data['metadata'] = $this -> microservices -> show_metadata(loadxml($fl));
+		$data['content'] = $this -> load -> view('colletion/view', $data, true);
+		$data['file'] = $this -> load -> view('colletion/cover_sheet', $data);
+	}
+
+	function show_metadata($xml) {
+		$sx = '';
+		$pg = array('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '');
+		foreach ($xml as $key => $value) {
+			//echo '<h4>' . $key . '</h4>';
+			$scanner = array('', '', '', '', '');
+			foreach ($value as $key2 => $value2) {
+				switch($key2) {
+					case 'Created' :
+						$pg[8] .= '<br>Created: <b>' . $value2 . '</b><br>';
+						break;
+					case 'ScannerSerial' :
+						$scanner[2] .= 'Serial <b>Nº' . $value2 . '</b>';
+						break;
+					case 'ScannerID' :
+						//$scanner[3] = 'ID: '.$value2;
+						break;
+					case 'Scannername' :
+						$scanner[1] = 'Scanner Model: <b>' . $value2 . '</b>';
+						break;
+					case 'ScannerInfo' :
+						//$scanner[0] = ' '.$value2;
+						break;
+					case 'ScanCounter' :
+						$pg[5] .= 'PageCounter:' . $value2.'<br>';
+						break;
+
+					case 'ScanResolution' :
+						$pg[2] .= 'ScanResolution: <b>' . $value2 . 'DPI</b><br>';
+						break;
+					case 'VZoom' :
+						$pg[6] .= 'Zoom (V):<b>' . $value2 . '</b><br>';
+						break;
+					case 'HZoom' :
+						$pg[6] .= 'Zoom (H):<b>' . $value2 . '</b><br>';
+						break;
+					case 'JPEGQuality' :
+						$pg[7] .= 'JPEGQuality:<b>' . $value2 . '%</b><br>';
+						break;
+					default :
+						//echo $key2 . ' - ' . $value2 . '<br>';
+						break;
+				}
+			}
+			$scan = '';
+			for ($r = 0; $r < count($scanner); $r++) {
+				if (strlen($scanner[$r]) > 0) {
+					if (strlen($scan) > 0) {
+						$scan .= '<br>';
+					}
+					$scan .= $scanner[$r];
+				}
+			}
+
+			$rs = '<br><br><br><br><br><font style="font-size:11px;">'.$scan.'<hr>';
+			/* Resolution */
+			if (strlen($pg[2]) > 0) { $rs .= $pg[2];
+			}
+						
+			/* Counter Page */
+			if (strlen($pg[5]) > 0) { $rs .= $pg[5];
+			}
+			/* ZOOM */
+			if (strlen($pg[6]) > 0) { $rs .= $pg[6];
+			}
+			/* QUALITY */
+			if (strlen($pg[7]) > 0) { $rs .= $pg[7];
+			}
+			$rs .= '</font>'.cr();
+			/* CREATE */
+			if (strlen($pg[8]) > 0) { $rs .= '<font style="font-size:8px;">'.$pg[8].'</font>';
+			}			
+			$rs .= $sx;
+			//echo '<pre>'.$rs . '</pre>';
+			return ($rs);
+		}
+		//exit ;
+	}
+
+}
+
+function loadxml($file) {
+	$xml = simplexml_load_file($file) or die("Error: Cannot create object " . $file);
+	if ($xml === false) {
+		echo "Failed loading XML: ";
+		foreach (libxml_get_errors() as $error) {
+			echo "<br>", $error -> message;
+			exit ;
+		}
+	} else {
+		return ($xml);
+	}
 }
 
 function move_file_to_undo($data = '') {
+	$data['undo'] = $data['jobs'] . '/undo';
 	move_file_to_folder($data, 'undo');
 }
 
@@ -141,6 +248,16 @@ function undelete_file($data = '') {
 	$data['undo'] = $data['jobs'] . '/undo';
 	$data['path'] = '';
 	move_file_to_folder($data, '');
+}
+
+function rename_file($data = '') {
+	$f1 = $data['file'];
+	$f2 = name_normalize($f1);
+	
+	$f1 = $data['dir'].$data['jobs'].'/'.$f1;
+	$f2 = $data['dir'].$data['jobs'].'/'.$f2;
+	echo '<br>'.$f1.'->'.$f2;
+	rename($f1,$f2);
 }
 
 function move_file_to_folder($data = '', $path) {

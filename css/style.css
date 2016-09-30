@@ -99,24 +99,7 @@ th {
 	color: #000000;
 }
 
-/******************** Font size ***********************/
-.small {
-	color: #888888;
-	font-size: 11px;
-}
-.middle {
-	font-size: 13px;
-}
-.big {
-	font-size: 15px;
-}
 
-.superbig {
-	font-size: 18px;
-}
-.xxxbig {
-	font-size: 23px;
-}
 @media (min-width: 768px) {
 	.middle {
 		font-size: 15px;
@@ -133,10 +116,7 @@ th {
 	}
 
 }
-/************************ Font style **********************/
-.roboto {
-	font-family: RobotoThin, Tahoma, Arial, Helvetica, sans-serif;
-}
+
 
 .bg_item_0 {
 	background-color: #eeeeee;

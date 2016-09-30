@@ -55,6 +55,14 @@ $us_nome = $_SESSION['user'];
 					$rd = $rd->uri->rsegments;
 					if (($rd[1] == 'io') and (isset($rd[3])) and (strlen($rd[3]) > 0))
 						{
+							for ($r = 4; $r < 6;$r++)
+								{
+									if (isset($rd[$r]))
+									{
+									if (strlen($rd[$r]) > 0)
+										{ $rd[3] .= '/'.$rd[$r]; }
+									}
+								}
 							echo '				
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Utilitários <span class="caret"></span></a>
@@ -62,8 +70,11 @@ $us_nome = $_SESSION['user'];
 									<li>
 										<a href="#" onclick="newxy(\''.base_url('index.php/io/dir_createpreview/'.$rd[3]).'\',400,600);">Criar Miniaturas e Preview</a>
 									</li>
+									<li>
+										<a href="#" onclick="newxy(\''.base_url('index.php/io/dir_normatize/'.$rd[3]).'\',400,600);">Padronizar nomes dos arquivos</a>
+									</li>									
 								</ul>
-							</li>';		
+							</li>';	
 						}
 					
 				}

@@ -67,6 +67,21 @@ class files extends CI_model {
 				$sx = '<iframe nome="pdf" width="100%" height="100%" src="' . $url . '">';
 				$sx .= '</iframe>';
 				break;
+			case 'mp3' :
+				$sx = '<br />
+					<br />
+					<audio controls="">
+					  <source src="' . base_url('index.php/io/image/' . $fld . '/?dd0=' . $id) . '" type="audio/mpeg"></source>
+					  <embed height="50" src="' . base_url('index.php/io/image/' . $fld . '/?dd0=' . $id) . '" width="100"></embed>
+					</audio> 
+					<br />
+					<br />';
+				break;
+			case 'htm' :
+				$url = base_url('index.php/io/image/' . $fld . '/?dd0=' . $id);
+				$sx = '<iframe nome="html" width="100%" height="100%" src="' . $url . '">';
+				$sx .= '</iframe>';
+				break;
 			case 'xml' :
 				$url = base_url('index.php/io/image/' . $fld . '/?dd0=' . $id . '&' . $fl . '.xml');
 				$sx = '<iframe nome="pdf" width="100%" height="100%" src="' . $url . '">';
@@ -100,7 +115,7 @@ class files extends CI_model {
 					';
 				break;
 			default :
-				$sx .= 'no preview';
+				$sx .= ' no preview ' . $type;
 		}
 		return ($sx);
 	}
@@ -137,23 +152,26 @@ class files extends CI_model {
 			$folders[] = '..';
 		}
 		// Open the given path
-		if ($handle = opendir($path)) {
-			// Loop through its contents adding folder paths or files to separate arrays
-			// Make sure not to include "." or ".." in the listing.
+		if (file_exists($path)) {
+			if ($handle = opendir($path)) {
+				// Loop through its contents adding folder paths or files to separate arrays
+				// Make sure not to include "." or ".." in the listing.
 
-			while (false !== ($file = readdir($handle))) {
-				if ($file != "." && $file != "..") {
-					if (is_dir($path . "/" . $file)) {
-						$folders[] = $file;
-					} else { $files[] = $file;
+				while (false !== ($file = readdir($handle))) {
+					if ($file != "." && $file != "..") {
+						if (is_dir($path . "/" . $file)) {
+							$folders[] = $file;
+						} else { $files[] = $file;
+						}
 					}
 				}
-			}
 
-			// Finally close the directory.
-			closedir($handle);
-			return ($files);
+				// Finally close the directory.
+				closedir($handle);
+				return ($files);
+			}
 		}
+		return ( array());
 
 	}
 
@@ -168,54 +186,57 @@ class files extends CI_model {
 			$folders[] = '..';
 		}
 		// Open the given path
-		if ($handle = opendir($path)) {
-			// Loop through its contents adding folder paths or files to separate arrays
-			// Make sure not to include "." or ".." in the listing.
+		if (file_exists($path)) {
+			if ($handle = opendir($path)) {
+				// Loop through its contents adding folder paths or files to separate arrays
+				// Make sure not to include "." or ".." in the listing.
 
-			while (false !== ($file = readdir($handle))) {
-				if ($file != "." && $file != "..") {
-					if (is_dir($path . "/" . $file)) {
-						$folders[] = $file;
-					} else { $files[] = $file;
+				while (false !== ($file = readdir($handle))) {
+					if ($file != "." && $file != "..") {
+						if (is_dir($path . "/" . $file)) {
+							$folders[] = $file;
+						} else { $files[] = $file;
+						}
 					}
 				}
-			}
 
-			$sx = '<table width="100%" class="table" border=0>' . cr();
-			$sx .= '<tr><td colspan=5>'.'<a href="'.base_url('index.php/io/dir/'.$pth).'"><span class="glyphicon glyphicon-th" aria-hidden="true"></span> '.'root'.'</a>'.'</td></tr>'.cr();
-			$xname = '';
-			for ($r = 0; $r < count($files); $r++) {
-				/* name */
-				$name = $this -> files -> without_type($files[$r]);
+				$sx = '<table width="100%" class="table" border=0>' . cr();
+				$sx .= '<tr><td colspan=5>' . '<a href="' . base_url('index.php/io/dir/' . $pth) . '"><span class="glyphicon glyphicon-th" aria-hidden="true"></span> ' . 'root' . '</a>' . '</td></tr>' . cr();
+				$xname = '';
+				for ($r = 0; $r < count($files); $r++) {
+					/* name */
+					$name = $this -> files -> without_type($files[$r]);
 
-				/* nlink */
-				$nlink = '<a href="' . base_url($link . $pth . '?dd0=' . $r) . '">';
-				$type = $this -> filetype($files[$r]);
+					/* nlink */
+					$nlink = '<a href="' . base_url($link . $pth . '?dd0=' . $r) . '">';
+					$type = $this -> filetype($files[$r]);
 
-				if ($xname != $name) {
-					if ($r > 0) { $sx .= '</td>' . cr();
+					if ($xname != $name) {
+						if ($r > 0) { $sx .= '</td>' . cr();
+						}
+						$sx .= '<tr>' . cr();
+						$sx .= '<td class="small">' . cr();
+						$sx .= $name . cr();
+						$sx .= '</td>' . cr();
 					}
-					$sx .= '<tr>' . cr();
-					$sx .= '<td class="small">' . cr();
-					$sx .= $name . cr();
+
+					$sx .= '<td width="20">';
+					$sx .= $nlink;
+					$sx .= $this -> icon_type($type);
+					$sx .= '</a>';
 					$sx .= '</td>' . cr();
+
+					$xname = $name;
 				}
-
-				$sx .= '<td width="20">';
-				$sx .= $nlink;
-				$sx .= $this -> icon_type($type);
-				$sx .= '</a>';
-				$sx .= '</td>' . cr();
-
-				$xname = $name;
+				if ($r > 0) { $sx .= '</td>' . cr();
+				}
+				$sx .= '</table>';
+				// Finally close the directory.
+				closedir($handle);
+				return ($sx);
 			}
-			if ($r > 0) { $sx .= '</td>' . cr();
-			}
-			$sx .= '</table>';
-			// Finally close the directory.
-			closedir($handle);
-			return ($sx);
 		}
+		return ('<br><font color="red">Erro na pasta</font>');
 
 	}
 
@@ -232,48 +253,52 @@ class files extends CI_model {
 			$folders[] = '..';
 		}
 		// Open the given path
-		if ($handle = opendir($path)) {
-			// Loop through its contents adding folder paths or files to separate arrays
-			// Make sure not to include "." or ".." in the listing.
+		if (file_exists($path)) {
+			if ($handle = opendir($path)) {
+				// Loop through its contents adding folder paths or files to separate arrays
+				// Make sure not to include "." or ".." in the listing.
 
-			while (false !== ($file = readdir($handle))) {
-				if ($file != "." && $file != "..") {
-					if (is_dir($path . "/" . $file)) {
-						$folders[] = $file;
-					} else { $files[] = $file;
+				while (false !== ($file = readdir($handle))) {
+					if ($file != "." && $file != "..") {
+						if (is_dir($path . "/" . $file)) {
+							$folders[] = $file;
+						} else { $files[] = $file;
+						}
 					}
 				}
-			}
-			$pth2 = $pth;
-			if (strlen($pth) > 0) {
-				$pth2 = $pth . '/';
-			}
-			$sx = '<table width="100%" class="table" border=0>' . cr();
-			for ($r = 0; $r < count($folders); $r++) {
-				$nlink = '<a href="' . base_url($link . $pth2 . $folders[$r]) . '">';
-				$sx .= '<tr>' . cr();
-				$sx .= '<td width="20">';
-				$sx .= $nlink;
-				if ($folders[$r] == '.') {
-					$sx .= '<span class="glyphicon glyphicon-level-up" aria-hidden="true"></span>';
-				} else {
-					$sx .= '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>';
-					//$sx .= '<img src="'.base_url('img/icon/icon_folder.png').'" height="20"></span>'.cr();
+				$pth2 = $pth;
+				if (strlen($pth) > 0) {
+					$pth2 = $pth . '/';
 				}
-				$sx .= '</a>';
-				$sx .= '</td>' . cr();
+				$sx = '<table width="100%" class="table" border=0>' . cr();
+				for ($r = 0; $r < count($folders); $r++) {
+					$nlink = '<a href="' . base_url($link . $pth2 . $folders[$r]) . '">';
+					$sx .= '<tr>' . cr();
+					$sx .= '<td width="20">';
+					$sx .= $nlink;
+					if ($folders[$r] == '.') {
+						$sx .= '<span class="glyphicon glyphicon-level-up" aria-hidden="true"></span>';
+					} else {
+						$sx .= '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>';
+						//$sx .= '<img src="'.base_url('img/icon/icon_folder.png').'" height="20"></span>'.cr();
+					}
+					$sx .= '</a>';
+					$sx .= '</td>' . cr();
 
-				$sx .= '<td>' . cr();
-				$sx .= $nlink;
-				$sx .= $folders[$r] . cr();
-				$sx .= '</a>';
-				$sx .= '</td>' . cr();
-				$sx .= '</tr>' . cr();
+					$sx .= '<td>' . cr();
+					$sx .= $nlink;
+					$sx .= $folders[$r] . cr();
+					$sx .= '</a>';
+					$sx .= '</td>' . cr();
+					$sx .= '</tr>' . cr();
+				}
+				$sx .= '</table>';
+				// Finally close the directory.
+				closedir($handle);
+				return ($sx);
 			}
-			$sx .= '</table>';
-			// Finally close the directory.
-			closedir($handle);
-			return ($sx);
+		} else {
+			return ('<br><font color="red">Erro na pasta</font>');
 		}
 	}
 
@@ -320,7 +345,7 @@ class files extends CI_model {
 		$this -> load -> model('files');
 
 		for ($r = 0; $r < count($files); $r++) {
-	
+
 			/* conversão */
 			$filen = $files[$r];
 
@@ -345,7 +370,7 @@ class files extends CI_model {
 			} else {
 				$data['content'] = 'Format inválido ' . $files[$r] . '<br>';
 				$data['title'] = '';
-				$this -> load -> view('content', $data);				
+				$this -> load -> view('content', $data);
 			}
 		}
 	}
@@ -376,5 +401,26 @@ class files extends CI_model {
 		return ($sx);
 	}
 
+}
+
+function name_normalize($file) {
+	$file = lowercaseSQL($file);
+	$file = troca($file, ' ', '_');
+
+	for ($r = 0; $r < strlen($file); $r++) {
+		$c = $file[$r];
+		if ($c == '(') { $file[$r] = '_';
+		}
+		if ($c == ')') { $file[$r] = '-';
+		}
+		if ($c == '[') { $file[$r] = '_';
+		}
+		if ($c == ']') { $file[$r] = '-';
+		}
+		if ($c > chr(120)) {
+			$file[$r] = ord($file[$r] - 48);
+		}
+	}
+	return ($file);
 }
 ?>
