@@ -177,14 +177,21 @@ class IO extends CI_Controller {
 		$this -> load -> view('content', $data);
 	}
 
-	function dir_normatize($pth = '',$d1='',$d2='',$d3='',$d4='',$d5='',$d6='',$d7='') {
-		if (strlen($d1) > 0) { $pth .= '/'.$d1; }
-		if (strlen($d2) > 0) { $pth .= '/'.$d2; }
-		if (strlen($d3) > 0) { $pth .= '/'.$d3; }
-		if (strlen($d4) > 0) { $pth .= '/'.$d4; }
-		if (strlen($d5) > 0) { $pth .= '/'.$d5; }
-		if (strlen($d6) > 0) { $pth .= '/'.$d6; }
-		if (strlen($d7) > 0) { $pth .= '/'.$d7; }
+	function dir_normatize($pth = '', $d1 = '', $d2 = '', $d3 = '', $d4 = '', $d5 = '', $d6 = '', $d7 = '') {
+		if (strlen($d1) > 0) { $pth .= '/' . $d1;
+		}
+		if (strlen($d2) > 0) { $pth .= '/' . $d2;
+		}
+		if (strlen($d3) > 0) { $pth .= '/' . $d3;
+		}
+		if (strlen($d4) > 0) { $pth .= '/' . $d4;
+		}
+		if (strlen($d5) > 0) { $pth .= '/' . $d5;
+		}
+		if (strlen($d6) > 0) { $pth .= '/' . $d6;
+		}
+		if (strlen($d7) > 0) { $pth .= '/' . $d7;
+		}
 
 		$this -> load -> model('microservices');
 		$this -> load -> model('files');
@@ -198,17 +205,16 @@ class IO extends CI_Controller {
 			$type = $this -> files -> filetype($files[$r]);
 			$f1 = $files[$r];
 			$f2 = name_normalize($files[$r]);
-			echo '<br>==>'.$f1.' '.$f2;
-			if ($f1 != $f2)
-				{
-					echo ' rename';
-					$data['jobs'] = $pth;
-					$data['file'] = $f1;
-					$data['dir'] = $this->files->temp_dir;
-					$this->microservices->exec('rename',$data);
-				}
+			echo '<br>==>' . $f1 . ' ' . $f2;
+			if ($f1 != $f2) {
+				echo ' rename';
+				$data['jobs'] = $pth;
+				$data['file'] = $f1;
+				$data['dir'] = $this -> files -> temp_dir;
+				$this -> microservices -> exec('rename', $data);
+			}
 		}
-//		$data['content'] = '<script> wclose(); </script>';
+		//		$data['content'] = '<script> wclose(); </script>';
 		$this -> load -> view('content', $data);
 	}
 
@@ -375,6 +381,12 @@ class IO extends CI_Controller {
 			$this -> load -> view('content', $data);
 		}
 
+	}
+
+	function directory($path = '') {
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
+		$this->files->normalize_names($path);
 	}
 
 }

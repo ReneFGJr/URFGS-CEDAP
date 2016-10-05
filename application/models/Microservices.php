@@ -252,10 +252,16 @@ function undelete_file($data = '') {
 
 function rename_file($data = '') {
 	$f1 = $data['file'];
-	$f2 = name_normalize($f1);
+	if (!isset($data['file2']))
+		{
+			$f2 = name_normalize($f1);		
+		} else {
+			$f2 = trim($data['file2']);
+		}
 	
-	$f1 = $data['dir'].$data['jobs'].'/'.$f1;
-	$f2 = $data['dir'].$data['jobs'].'/'.$f2;
+	
+	$f1 = $f1;
+	$f2 = $f2;
 	echo '<br>'.$f1.'->'.$f2;
 	rename($f1,$f2);
 }

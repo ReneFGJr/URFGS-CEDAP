@@ -31,6 +31,12 @@ $us_nome = $_SESSION['user'];
 				<li>
 				<a href="<?php echo base_url('index.php/main/filescan'); ?>">File Scan</a>
 				</li>
+				<?php
+				//if (perfil("#ADM#GEG")) 
+				{
+					echo '<li><a href="' . base_url('index.php/io/mets') . '">METS</a></li>' . cr();
+				}
+				?>					
 				<!--
 				<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Financeiro <span class="caret"></span></a>
@@ -98,6 +104,7 @@ $us_nome = $_SESSION['user'];
 					echo '<li><a href="' . base_url('index.php/admin/logins') . '">Atribuir Perfil a usuários</a></li>' . cr();
 				}
 				?>
+			
 			</ul>
 			<?php
 			//if (perfil("#ADM"))

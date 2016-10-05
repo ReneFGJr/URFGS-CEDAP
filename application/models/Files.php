@@ -1,6 +1,6 @@
 <?php
 class files extends CI_model {
-	var $temp_dir = 'D:/tmp/';
+	var $temp_dir = 'd:/tmp/';
 	/* var $temp_dir = 'Z:/3x4/'; */
 
 	function icon_type($tp) {
@@ -301,6 +301,43 @@ class files extends CI_model {
 			return ('<br><font color="red">Erro na pasta</font>');
 		}
 	}
+
+	function directory($directory = '') {
+		$dir = $this -> temp_dir;
+		if (strlen($directory) > 0) { $dir .= $directory; }
+		
+		$files = glob($dir . '*');
+		/* perform additional sort here */
+		echo "<ul>\n";
+		for ($r=0;$r < count($files);$r++) {
+			$file = $files[$r];
+			if (is_dir($file)) {
+					$files2 = glob($file.'/*');
+					$files = array_merge($files,$files2);		
+				}
+			
+		}
+		asort($files);
+		return($files);
+	}
+	
+	function normalize_names($path='')
+		{
+			$files = $this->directory($path);
+			foreach ($files as $key => $value) {
+				$name = troca($value,$this->temp_dir,'');
+				$nname = name_normalize($name);
+				if ($name != $nname)
+					{
+						$data = array();
+						$data['jobs'] = '';
+						$data['dir'] = '';
+						$data['file'] = $value;
+						$this->microservices->exec('rename',$data);
+					}
+			}
+			return(1);
+		}
 
 	function dirscan($dir = '') {
 		if (strlen($dir) == 0) {
