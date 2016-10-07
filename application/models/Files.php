@@ -2,6 +2,14 @@
 class files extends CI_model {
 	var $temp_dir = 'd:/tmp/';
 	/* var $temp_dir = 'Z:/3x4/'; */
+	
+	function __construct() {
+		if (!isset($_SESSION['folder'])) 
+			{
+				redirect('index.php/main');
+			};
+		$this->temp_dir = $_SESSION['folder'];
+	}
 
 	function icon_type($tp) {
 		switch($tp) {
@@ -304,40 +312,39 @@ class files extends CI_model {
 
 	function directory($directory = '') {
 		$dir = $this -> temp_dir;
-		if (strlen($directory) > 0) { $dir .= $directory; }
-		
+		if (strlen($directory) > 0) { $dir .= $directory;
+		}
+
 		$files = glob($dir . '*');
 		/* perform additional sort here */
 		echo "<ul>\n";
-		for ($r=0;$r < count($files);$r++) {
+		for ($r = 0; $r < count($files); $r++) {
 			$file = $files[$r];
 			if (is_dir($file)) {
-					$files2 = glob($file.'/*');
-					$files = array_merge($files,$files2);		
-				}
-			
+				$files2 = glob($file . '/*');
+				$files = array_merge($files, $files2);
+			}
+
 		}
 		asort($files);
-		return($files);
+		return ($files);
 	}
-	
-	function normalize_names($path='')
-		{
-			$files = $this->directory($path);
-			foreach ($files as $key => $value) {
-				$name = troca($value,$this->temp_dir,'');
-				$nname = name_normalize($name);
-				if ($name != $nname)
-					{
-						$data = array();
-						$data['jobs'] = '';
-						$data['dir'] = '';
-						$data['file'] = $value;
-						$this->microservices->exec('rename',$data);
-					}
+
+	function normalize_names($path = '') {
+		$files = $this -> directory($path);
+		foreach ($files as $key => $value) {
+			$name = troca($value, $this -> temp_dir, '');
+			$nname = name_normalize($name);
+			if ($name != $nname) {
+				$data = array();
+				$data['jobs'] = '';
+				$data['dir'] = '';
+				$data['file'] = $value;
+				$this -> microservices -> exec('rename', $data);
 			}
-			return(1);
 		}
+		return (1);
+	}
 
 	function dirscan($dir = '') {
 		if (strlen($dir) == 0) {
@@ -436,6 +443,45 @@ class files extends CI_model {
 		 *
 		 */
 		return ($sx);
+	}
+
+	function folders() {
+		$sql = "select * from folders where f_status = 1 order by f_descript";
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		$sx = '<div class="row">';
+		for ($r = 0; $r < count($rlt); $r++) {
+			$line = $rlt[$r];
+			$link = base_url('index.php/main/folder_select/' . $line['id_f'] . '/' . checkpost_link($line['id_f']));
+			$sx = '<div class="col-md-2 text-center">';
+			$sx .= '<a href="' . $link . '" class="btn btn-primary" style=" width:100%; box-shadow: 3px 3px 5px grey;">';
+			$sx .= $line['f_descript'];
+			$sx .= '</div>';
+		}
+		$sx .= '</div>';
+		return ($sx);
+	}
+
+	function folder_set($id) {
+		$data = $this->le_folder($id);
+		$path = $data['f_folder'];
+		$newdata = array('folder' => $path);
+
+		$this -> session -> set_userdata($newdata);
+
+	}
+
+	function le_folder($id) {
+		$sql = "select * from folders where id_f = " . round($id);
+		$rlt = $this -> db -> query($sql);
+		$rlt = $rlt -> result_array();
+		if (count($rlt) > 0)
+			{
+				return($rlt[0]);
+			} else {
+				return(array());
+			}
+		return ($rlt);
 	}
 
 }

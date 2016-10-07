@@ -10,6 +10,7 @@ class Main extends CI_Controller {
 		date_default_timezone_set('America/Sao_Paulo');
 	}
 
+
 	function cab($data = array()) {
 		$js = array();
 		$css = array();
@@ -42,15 +43,38 @@ class Main extends CI_Controller {
 		$this -> footer();
 	}
 
+	function folders() {
+		$this -> load -> model('files');
+		$this -> cab();
+		$data['content'] = $this -> files -> folders();
+
+		$data['title'] = msg('folder');
+		$this -> load -> view('content', $data);
+		$this -> footer();
+	}
+
+	function folder_select($id=0,$chk='')
+		{
+			$this -> load -> model('files');
+			$dt = $this->files->le_folder($id);
+			if (count($dt) == 0)
+				{
+					redirect(base_url('index.php/main/folders'));
+				} else {
+					$this->files->folder_set($id);
+					redirect(base_url('index.php/io'));
+				}
+		}
+
 	function cover_sheet($id) {
 		$this -> load -> helper('tcpdf');
-		
+
 		/* Load Model */
 		$model = 'colletions';
 		$this -> load -> model($model);
 		$data = $this -> $model -> le($id);
-		$data['content'] = $this->load->view('colletion/view',$data,true);
-	
+		$data['content'] = $this -> load -> view('colletion/view', $data, true);
+
 		$this -> load -> view('colletion/cover_sheet', $data);
 	}
 

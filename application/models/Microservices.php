@@ -28,6 +28,15 @@ class microservices extends CI_model {
 			$sx .= '<button onclick="newxy(\'' . base_url('index.php/io/jobs_metadata/' . $pth . '?dd0=' . $this -> files -> without_type($file)) . $conf . '\',750,600);" class="btn btn-success" style="width: 100%">';
 			$sx .= 'Criar Dados do Job';
 			$sx .= '</button>';
+			
+			$sx .= '<br>';
+			$sx .= '<br>';
+			
+			$sx .= '<a href="'.base_url('index.php/io/jobs_rename/' . $pth) . '">';
+			$sx .= '<button class="btn btn-success" style="width: 100%">';
+			$sx .= 'Renomear Job';
+			$sx .= '</button>';			
+			$sx .= '</a>';
 		}
 
 		/* ações para os tipo */
@@ -108,6 +117,7 @@ class microservices extends CI_model {
 
 			$ln = troca($ln, '$1', $file1);
 			$ln = troca($ln, '$2', $file2);
+
 			if (strlen($ln) > 0) {
 				$t = $sv['s_language'];
 				switch ($t) {
