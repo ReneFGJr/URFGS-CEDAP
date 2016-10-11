@@ -4,11 +4,11 @@ class files extends CI_model {
 	/* var $temp_dir = 'Z:/3x4/'; */
 	
 	function __construct() {
-		if (!isset($_SESSION['folder'])) 
+		if (isset($_SESSION['folder'])) 
 			{
-				redirect('index.php/main');
+				$this->temp_dir = $_SESSION['folder'];
 			};
-		$this->temp_dir = $_SESSION['folder'];
+		
 	}
 
 	function icon_type($tp) {
@@ -75,6 +75,11 @@ class files extends CI_model {
 				$sx = '<iframe nome="pdf" width="100%" height="100%" src="' . $url . '">';
 				$sx .= '</iframe>';
 				break;
+			case 'txt' :
+				$url = base_url('index.php/io/image/' . $fld . '/?dd0=' . $id);
+				$sx = '<iframe nome="pdf" width="100%" height="100%" src="' . $url . '">';
+				$sx .= '</iframe>';
+				break;				
 			case 'mp3' :
 				$sx = '<br />
 					<br />

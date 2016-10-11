@@ -4,9 +4,10 @@ class colletions extends CI_model {
 	function cp() {
 		$cp = array();
 		array_push($cp, array('$H8', 'id_c', '', false, true));
-		array_push($cp, array('$S80', 'c_name', 'Coleção', false, true));
+		array_push($cp, array('$S80', 'c_name', 'Coleção', true, true));
 		array_push($cp, array('$T80:6', 'c_context', 'Descrição', false, true));
 		array_push($cp, array('$O 1:Ativo&9:Cancelado', 'c_status', 'Situação', false, true));
+		array_push($cp, array('$S80', 'c_folder', msg('folder'), true, true));
 		array_push($cp, array('$H8', 'updated_at', date("Y-m-d H:i:s"), false, true));
 		
 		array_push($cp, array('$A', '', 'Metadata formats', false, true));

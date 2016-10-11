@@ -51,4 +51,9 @@ $lang['pt_BR'] = 'Português';
 $lang['us'] = 'Inglês';
 $lang['dc:title'] = 'Título';
 $lang['dc:format'] = 'Formato';
+
+$lang['folders'] = 'Pastas de Trabalho';
+$lang['folder'] = 'Pasta de Trabalho';
+
+$lang['collections'] = 'Coleções';
 ?>

@@ -10,7 +10,6 @@ class Main extends CI_Controller {
 		date_default_timezone_set('America/Sao_Paulo');
 	}
 
-
 	function cab($data = array()) {
 		$js = array();
 		$css = array();
@@ -43,6 +42,66 @@ class Main extends CI_Controller {
 		$this -> footer();
 	}
 
+	function collections($id = '') {
+		/* Load Model */
+		$model = 'colletions';
+		$this -> load -> model($model);
+
+		/* Controller */
+		$this -> cab();
+
+		$data = array();
+		$data['title'] = 'Coleções';
+
+		$form = new form;
+		$form = $this -> $model -> row($form);
+		$form -> tabela = $this -> $model -> table;
+		$form -> see = true;
+		$form -> novo = false;
+		$form -> edit = false;
+
+		$form -> row_edit = '';
+		$form -> row_view = base_url('index.php/main/colletion_view');
+		$form -> row = base_url('index.php/main/collections');
+
+		$data['content'] = row($form, $id);
+
+		$this -> load -> view('content', $data);
+	}
+
+	function colletion_view($id = 0, $chk = '') {
+		/* Load Model */
+		$model = 'colletions';
+		$this -> load -> model($model);
+		$this -> load -> model('files');
+
+		/* Controller */
+		$this -> cab();
+
+		$data = $this -> $model -> le($id);
+		$tela = $this -> load -> view('colletion/view', $data, true);
+
+		$tela .= '<br>';
+		/* checa folder */
+		$path = $this -> files -> temp_dir;
+		if (strlen($data['c_folder']) > 0) {
+			$path .= '/' . trim($data['c_folder']);
+		}
+		if (!is_dir($path)) {
+			mkdir($path) or dir("Erro ao criar arquivo");
+		}
+		if (is_dir($path)) {
+			$tela .= '<a href="' . base_url('index.php/io/dir/' . $data['c_folder']) . '" class="btn btn-primary">' . msg('folder') . '</a>';
+			$data = array();
+
+			$dados['content'] = $tela;
+			$dados['title'] = '';
+			$this -> load -> view('content', $dados);
+		}
+
+		$this -> footer();
+	}
+
 	function folders() {
 		$this -> load -> model('files');
 		$this -> cab();
@@ -53,18 +112,16 @@ class Main extends CI_Controller {
 		$this -> footer();
 	}
 
-	function folder_select($id=0,$chk='')
-		{
-			$this -> load -> model('files');
-			$dt = $this->files->le_folder($id);
-			if (count($dt) == 0)
-				{
-					redirect(base_url('index.php/main/folders'));
-				} else {
-					$this->files->folder_set($id);
-					redirect(base_url('index.php/io'));
-				}
+	function folder_select($id = 0, $chk = '') {
+		$this -> load -> model('files');
+		$dt = $this -> files -> le_folder($id);
+		if (count($dt) == 0) {
+			redirect(base_url('index.php/main/folders'));
+		} else {
+			$this -> files -> folder_set($id);
+			redirect(base_url('index.php/io'));
 		}
+	}
 
 	function cover_sheet($id) {
 		$this -> load -> helper('tcpdf');

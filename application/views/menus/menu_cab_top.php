@@ -1,5 +1,11 @@
 <?php
 $us_nome = $_SESSION['user'];
+if (isset($_SESSION['folder']))
+	{
+		$folder = $_SESSION['folder'];		
+	} else {
+		$folder = '';		
+	}
 ?>
 <nav class="navbar navbar-default navbar-fixed-top">
 	<div class="container-fluid">
@@ -18,16 +24,14 @@ $us_nome = $_SESSION['user'];
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li>
-					<a href="#">Documentos</a>
+					<a href="<?php echo base_url('index.php/main/folder_select');?>"><?php echo msg('folders');?></a>
 				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Coleções<span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						<li>
-							<a href="#">Selecionar</a>
-						</li>
-					</ul>
-				</li>
+				<li>
+					<a href="<?php echo base_url('index.php/main/collections');?>"><?php echo msg('collections');?></a>
+				</li>				
+				<?php 
+				if (strlen($folder) > 0) {
+				?>
 				<li>
 				<a href="<?php echo base_url('index.php/main/filescan'); ?>">File Scan</a>
 				</li>
@@ -151,6 +155,7 @@ $us_nome = $_SESSION['user'];
 					</ul>
 				</li>
 			</ul>
+			<?php } ?>
 		</div><!-- /.navbar-collapse -->
 	</div><!-- /.container-fluid -->
 </nav>

@@ -94,6 +94,21 @@ class IO extends CI_Controller {
 				header("Content-type: text/xml");
 				header('Content-Disposition: filename="' . $fl[$id] . '.xml"');
 				break;
+			case 'txt' :
+				$rlt = fopen($file,'r');
+				$lt = '';
+				while (!feof($rlt))
+					{
+						$lt .= fread($rlt,1024);
+					}
+				echo '<pre>';
+				echo $lt;
+				echo '</pre>';
+				return ('');
+
+				header("Content-type: text/xml");
+				header('Content-Disposition: filename="' . $fl[$id] . '.xml"');
+				break;				
 			case 'htm' :
 				header("Content-type: text/html");
 				header('Content-Disposition: filename="' . $fl[$id] . '.xml"');
@@ -155,6 +170,7 @@ class IO extends CI_Controller {
 		$data['files'] = $this -> files -> listFile($path, $link);
 		$data['files_metadata'] = $preview;
 		$data['actions'] = $this -> microservices -> action($path, $fl);
+		$data['path'] = $dd;
 		$this -> load -> view('io/home', $data);
 		$this -> footer();
 	}
@@ -195,6 +211,9 @@ class IO extends CI_Controller {
 
 		$this -> load -> model('microservices');
 		$this -> load -> model('files');
+		
+		$this->files->normalize_names($pth);
+		exit;
 		$files = $this -> files -> files($pth);
 		$data['nocab'] = true;
 		$this -> cab($data);
@@ -381,12 +400,6 @@ class IO extends CI_Controller {
 			$this -> load -> view('content', $data);
 		}
 
-	}
-
-	function directory($path = '') {
-		$this -> load -> model('microservices');
-		$this -> load -> model('files');
-		$this->files->normalize_names($path);
 	}
 	
 	function jobs_rename($path='')
