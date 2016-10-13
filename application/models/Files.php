@@ -2,13 +2,12 @@
 class files extends CI_model {
 	var $temp_dir = 'd:/tmp/';
 	/* var $temp_dir = 'Z:/3x4/'; */
-	
+
 	function __construct() {
-		if (isset($_SESSION['folder'])) 
-			{
-				$this->temp_dir = $_SESSION['folder'];
-			};
-		
+		if (isset($_SESSION['folder'])) {
+			$this -> temp_dir = $_SESSION['folder'];
+		};
+
 	}
 
 	function icon_type($tp) {
@@ -79,7 +78,7 @@ class files extends CI_model {
 				$url = base_url('index.php/io/image/' . $fld . '/?dd0=' . $id);
 				$sx = '<iframe nome="pdf" width="100%" height="100%" src="' . $url . '">';
 				$sx .= '</iframe>';
-				break;				
+				break;
 			case 'mp3' :
 				$sx = '<br />
 					<br />
@@ -388,6 +387,42 @@ class files extends CI_model {
 
 	}
 
+	function create_jpg_from_mini($data) {
+		$files = $data['files'];
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
+
+		for ($r = 0; $r < count($files); $r++) {
+
+			/* conversão */
+			$filen = $files[$r];
+
+			if ($this -> filetype($filen) == 'jpg') {
+
+				/* PART II */
+				$dir = $this->temp_dir;
+				$path = trim($data['jobs']);
+				if (strpos($path,'/') > 0)
+					{
+						print_r($data);		
+					}				
+				$dir .= $path.'/trumb/';
+				
+				$data['file'] = $files[$r];
+				$data['file2'] = $dir . $filen;
+				$this -> microservices -> exec('jpg320', $data);
+
+				$data['content'] = 'Convertendo ' . $files[$r] . '<br>';
+				$data['title'] = '';
+				$this -> load -> view('content', $data);
+			} else {
+				$data['content'] = 'Format inválido ' . $files[$r] . '<br>';
+				$data['title'] = '';
+				$this -> load -> view('content', $data);
+			}
+		}
+	}
+
 	function create_jpg_from_tiff($data) {
 		$files = $data['files'];
 		$this -> load -> model('microservices');
@@ -409,10 +444,6 @@ class files extends CI_model {
 				$data['file2'] = $filen;
 				$this -> microservices -> exec('jpg2048', $data);
 
-				/* PART II */
-				$data['file'] = $files[$r];
-				$data['file2'] = 'thumb/' . $filen;
-				$this -> microservices -> exec('jpg320', $data);
 				$data['content'] = 'Convertendo ' . $files[$r] . '<br>';
 				$data['title'] = '';
 				$this -> load -> view('content', $data);
@@ -434,8 +465,39 @@ class files extends CI_model {
 
 			if (strpos($files[$r], '.jpg')) {
 				//$sx .= $files[$r];
+				if (strpos($job,'/'))
+					{
+						$job = substr($job,0,strpos($job,'/'));
+					}
+									
 				$mini = $job . '/' . $files[$r];
-				$link = '<a href="' . base_url('index.php/io/dir/' . $job . '?dd0=' . $r) . '">';
+				$mini = $job . '/trumb/' . $files[$r];
+				
+				$temp = $this->files->temp_dir;
+				$temp .= $job.'/trumb';
+				if (!is_dir($temp))
+					{
+						$temp = troca($temp,'\\','/');
+						mkdir($temp);
+					}
+
+				
+				$filename = $this->files->temp_dir.$job.'/';
+				$filename = troca($filename,'\\','/');
+				$filename .= 'trumb/'.$files[$r];
+				if (!file_exists($filename))
+					{
+						$file = $this->files->temp_dir.$dir.'/'.$files[$r];
+						$file = troca($file,'\\','/');
+						$data['file'] = $files[$r];
+						$data['file2'] = $filename;
+						$data['jobs'] = $dir;
+						$this->microservices->exec('jpg320',$data);
+						//$sx .= 'ERRO '.$filename.' '.$file;
+						//$sx .= '<br>'.$mini;
+					}
+				
+				$link = '<a href="' . base_url('index.php/io/dir/' . $dir . '?dd0=' . $r) . '">';
 				$sx .= $link . '<img src="' . base_url('index.php/job/file/' . $mini) . '" width="150" style="border:1px; margin: 8px; box-shadow: 5px 5px 5px grey;">' . '</a>';
 			}
 		}
@@ -468,7 +530,7 @@ class files extends CI_model {
 	}
 
 	function folder_set($id) {
-		$data = $this->le_folder($id);
+		$data = $this -> le_folder($id);
 		$path = $data['f_folder'];
 		$newdata = array('folder' => $path);
 
@@ -480,12 +542,11 @@ class files extends CI_model {
 		$sql = "select * from folders where id_f = " . round($id);
 		$rlt = $this -> db -> query($sql);
 		$rlt = $rlt -> result_array();
-		if (count($rlt) > 0)
-			{
-				return($rlt[0]);
-			} else {
-				return(array());
-			}
+		if (count($rlt) > 0) {
+			return ($rlt[0]);
+		} else {
+			return ( array());
+		}
 		return ($rlt);
 	}
 

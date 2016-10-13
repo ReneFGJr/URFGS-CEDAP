@@ -95,12 +95,11 @@ class IO extends CI_Controller {
 				header('Content-Disposition: filename="' . $fl[$id] . '.xml"');
 				break;
 			case 'txt' :
-				$rlt = fopen($file,'r');
+				$rlt = fopen($file, 'r');
 				$lt = '';
-				while (!feof($rlt))
-					{
-						$lt .= fread($rlt,1024);
-					}
+				while (!feof($rlt)) {
+					$lt .= fread($rlt, 1024);
+				}
 				echo '<pre>';
 				echo $lt;
 				echo '</pre>';
@@ -108,7 +107,7 @@ class IO extends CI_Controller {
 
 				header("Content-type: text/xml");
 				header('Content-Disposition: filename="' . $fl[$id] . '.xml"');
-				break;				
+				break;
 			case 'htm' :
 				header("Content-type: text/html");
 				header('Content-Disposition: filename="' . $fl[$id] . '.xml"');
@@ -171,6 +170,15 @@ class IO extends CI_Controller {
 		$data['files_metadata'] = $preview;
 		$data['actions'] = $this -> microservices -> action($path, $fl);
 		$data['path'] = $dd;
+		$pt = base_url('index.php/io/dir/' . $path);
+		$data['bt_preview'] = '';
+		$data['bt_next'] = '';
+		$i = round(get("dd0"));
+		if (strlen(get("dd0")) > 0) {
+			$data['bt_preview'] = '<a href="' . $pt .'?dd0='.($i-1). '" class="btn btn-primary"><< Anterior</a>';
+			$data['bt_next'] = '<a href="' . $pt  .'?dd0='.($i+1). '" class="btn btn-primary">Próxima >></a>';
+		} else {
+		}
 		$this -> load -> view('io/home', $data);
 		$this -> footer();
 	}
@@ -211,9 +219,9 @@ class IO extends CI_Controller {
 
 		$this -> load -> model('microservices');
 		$this -> load -> model('files');
-		
-		$this->files->normalize_names($pth);
-		exit;
+
+		$this -> files -> normalize_names($pth);
+		exit ;
 		$files = $this -> files -> files($pth);
 		$data['nocab'] = true;
 		$this -> cab($data);
@@ -234,6 +242,35 @@ class IO extends CI_Controller {
 			}
 		}
 		//		$data['content'] = '<script> wclose(); </script>';
+		$this -> load -> view('content', $data);
+	}
+
+	function dir_createminiature($pth = '') {
+		$this -> load -> model('microservices');
+		$this -> load -> model('files');
+		$files = $this -> files -> files($pth);
+		$data['nocab'] = true;
+		$this -> cab($data);
+
+		for ($r = 0; $r < count($files); $r++) {
+			$data['content'] = 'Criando ' . $files[$r] . '<br>';
+			$data['title'] = '';
+			$type = $this -> files -> filetype($files[$r]);
+
+			if ($type == 'jpg') {
+
+				$file = $files[$r];
+				$data = array();
+				$data['jobs'] = $pth;
+				$data['files'] = array($file);
+
+				$this -> files -> create_jpg_from_mini($data);
+
+				$this -> load -> view('content', $data);
+				$this -> output -> append_output(ob_get_contents());
+			}
+		}
+		$data['content'] = '<script> wclose(); </script>';
 		$this -> load -> view('content', $data);
 	}
 
@@ -401,46 +438,41 @@ class IO extends CI_Controller {
 		}
 
 	}
-	
-	function jobs_rename($path='')
-		{
+
+	function jobs_rename($path = '') {
 		$this -> load -> model('microservices');
 		$this -> load -> model('files');
-		$this->cab();
-		
+		$this -> cab();
+
 		$form = new form;
-		$form-> id = 0;
+		$form -> id = 0;
 		$cp = array();
-		array_push($cp,array('$H8','','',False,False));
-		array_push($cp,array('$M','','<h3>'.msg('folder_name').': <b>'.$path.'</b></h3>',False,True));
-		array_push($cp,array('$S40','',msg('new_folder_name'),True,True));
-		
+		array_push($cp, array('$H8', '', '', False, False));
+		array_push($cp, array('$M', '', '<h3>' . msg('folder_name') . ': <b>' . $path . '</b></h3>', False, True));
+		array_push($cp, array('$S40', '', msg('new_folder_name'), True, True));
+
 		$path_new = get("dd2");
-		if (strlen($path_new) > 0)
-			{				
-				$path_new = name_normalize($path_new);
-				array_push($cp,array('$M','','<h3>'.msg('change_folder_name').': <b>'.$path_new.'</b></h3>',False,True));
-				array_push($cp,array('$B8','',msg('confirm_change'),False,False));
-			} else {
-				array_push($cp,array('$B8','',msg('change'),False,False));
-			}
-		$data['content'] = $form->editar($cp,'');
-		$data['title'] = msg('rename_file');			
-			
-		if ($form->saved > 0)
-			{
-				$dta['file'] = $this->files->temp_dir.$path;
-				$dta['file2'] = $this->files->temp_dir.$path_new;
-				$dta['jobs'] = '';
-				$this->microservices->exec('rename',$dta);
-				redirect(base_url('index.php/io/'));
-			}			
-		
-
-		$this->load->view('content',$data);
-		
-
+		if (strlen($path_new) > 0) {
+			$path_new = name_normalize($path_new);
+			array_push($cp, array('$M', '', '<h3>' . msg('change_folder_name') . ': <b>' . $path_new . '</b></h3>', False, True));
+			array_push($cp, array('$B8', '', msg('confirm_change'), False, False));
+		} else {
+			array_push($cp, array('$B8', '', msg('change'), False, False));
 		}
+		$data['content'] = $form -> editar($cp, '');
+		$data['title'] = msg('rename_file');
+
+		if ($form -> saved > 0) {
+			$dta['file'] = $this -> files -> temp_dir . $path;
+			$dta['file2'] = $this -> files -> temp_dir . $path_new;
+			$dta['jobs'] = '';
+			$this -> microservices -> exec('rename', $dta);
+			redirect(base_url('index.php/io/'));
+		}
+
+		$this -> load -> view('content', $data);
+
+	}
 
 }
 ?>

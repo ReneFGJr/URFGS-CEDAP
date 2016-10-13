@@ -114,10 +114,11 @@ class microservices extends CI_model {
 			$ln = $sv['s_cmd'];
 			$file1 = $this -> files -> temp_dir . $job . '/' . $file;
 			$file2 = $this -> files -> temp_dir . $job . '/' . $filen;
+			if (strlen($filen) > 0) { $file2 = $filen; }
 
 			$ln = troca($ln, '$1', $file1);
 			$ln = troca($ln, '$2', $file2);
-
+			$ln = troca($ln,'\\','/');
 			if (strlen($ln) > 0) {
 				$t = $sv['s_language'];
 				switch ($t) {

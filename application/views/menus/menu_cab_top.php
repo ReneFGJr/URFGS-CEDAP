@@ -78,8 +78,11 @@ if (isset($_SESSION['folder']))
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Utilitários <span class="caret"></span></a>
 								<ul class="dropdown-menu">
 									<li>
-										<a href="#" onclick="newxy(\''.base_url('index.php/io/dir_createpreview/'.$rd[3]).'\',400,600);">Criar Miniaturas e Preview</a>
+										<a href="#" onclick="newxy(\''.base_url('index.php/io/dir_createpreview/'.$rd[3]).'\',400,600);">Criar Preview</a>
 									</li>
+									<li>
+										<a href="#" onclick="newxy(\''.base_url('index.php/io/dir_createminiature/'.$rd[3]).'\',400,600);">Criar Miniaturas</a>
+									</li>									
 									<li>
 										<a href="#" onclick="newxy(\''.base_url('index.php/io/dir_normatize/'.$rd[3]).'\',400,600);">Padronizar nomes dos arquivos</a>
 									</li>									

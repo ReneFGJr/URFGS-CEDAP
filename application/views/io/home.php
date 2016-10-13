@@ -31,6 +31,8 @@
 			<?php echo $files; ?>
 		</div>
 		<div class="col-md-5">
+			<?php echo $bt_preview;?>
+			<?php echo $bt_next;?>
 			<?php echo $files_metadata; ?>
 		</div>
 		<div class="col-md-2">
