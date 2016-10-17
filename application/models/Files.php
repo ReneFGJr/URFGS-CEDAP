@@ -406,7 +406,7 @@ class files extends CI_model {
 					{
 						print_r($data);		
 					}				
-				$dir .= $path.'/trumb/';
+				$dir .= $path.'/thumb/';
 				
 				$data['file'] = $files[$r];
 				$data['file2'] = $dir . $filen;
@@ -441,7 +441,8 @@ class files extends CI_model {
 
 				/* PART I */
 				$data['file'] = $files[$r];
-				$data['file2'] = $filen;
+				$data['file2'] = $this->files->temp_dir.$data['jobs'].'/'.$filen;
+				
 				$this -> microservices -> exec('jpg2048', $data);
 
 				$data['content'] = 'Convertendo ' . $files[$r] . '<br>';
@@ -471,10 +472,10 @@ class files extends CI_model {
 					}
 									
 				$mini = $job . '/' . $files[$r];
-				$mini = $job . '/trumb/' . $files[$r];
+				$mini = $job . '/thumb/' . $files[$r];
 				
 				$temp = $this->files->temp_dir;
-				$temp .= $job.'/trumb';
+				$temp .= $job.'/thumb';
 				if (!is_dir($temp))
 					{
 						$temp = troca($temp,'\\','/');
@@ -484,7 +485,7 @@ class files extends CI_model {
 				
 				$filename = $this->files->temp_dir.$job.'/';
 				$filename = troca($filename,'\\','/');
-				$filename .= 'trumb/'.$files[$r];
+				$filename .= 'thumb/'.$files[$r];
 				if (!file_exists($filename))
 					{
 						$file = $this->files->temp_dir.$dir.'/'.$files[$r];
